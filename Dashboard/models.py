@@ -24,5 +24,5 @@ class Grades(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user','course'], name='user_course_pair_grades'),
+            models.UniqueConstraint(fields=['user','course','quiz'], name='user_course_quiz_grades'),
         ]
