@@ -1,3 +1,31 @@
 #pink{
-    background-color: blue;
+    background-color: rgb(243, 240, 226);
+}
+
+.section {
+    font-size: 1.5cm;
+    color: black;
+    margin-left: 10%;
+}
+
+.course-button{
+    width: 100;
+    height: 100;
+}
+
+.gesture-detector{
+    background-color: whitesmoke; 
+    color: black; 
+    border: none; 
+    padding: 0%;
+}
+
+.border{
+    display: inline-block;
+    border: 2px solid rgb(31, 30, 30); 
+    padding: 0.5cm; 
+    margin-top: 0.25cm; 
+    margin-bottom: 0.25;
+    margin-left: 10%;
+    border-radius: 0.5cm;
 }

@@ -1,15 +1,101 @@
 <!-- templates/dashboard.html-->
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
 
-<ol>  courses
-    <li> <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">course 1</a></li>
-    <li><a href="courses">course 2</a></li>
-    <li><a href="courses"> course3</a></li>
-</ol>
-(Align assignments to the right)
+<div class="section">
+    Courses
+</div>
+
+
+    
+    <div class="border">
+  
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <button class="gesture-detector" >
+            <div class="card" style="width: 18rem;">
+                <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">CS251</h5>
+                  <p class="card-text">Software Systems Lab</p>
+                </div>
+            </div>
+        </button>
+      </div>
+      <div class="col">
+        <button class="gesture-detector" >
+            <div class="card" style="width: 18rem;">
+                <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">CS251</h5>
+                  <p class="card-text">Software Systems Lab</p>
+                </div>
+            </div>
+        </button>
+      </div>
+      <div class="col">
+        <button class="gesture-detector" >
+            <div class="card" style="width: 18rem;">
+                <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">CS251</h5>
+                  <p class="card-text">Software Systems Lab</p>
+                </div>
+            </div>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+        <p>
+            
+        </p>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="gesture-detector" >
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title">CS251</h5>
+                      <p class="card-text">Software Systems Lab</p>
+                    </div>
+                </div>
+            </button>
+        </div>
+        <div class="col">
+            <button class="gesture-detector" >
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title">CS251</h5>
+                      <p class="card-text">Software Systems Lab</p>
+                    </div>
+                </div>
+            </button>
+        </div>
+        <div class="col">
+            <button class="gesture-detector" >
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title">CS251</h5>
+                      <p class="card-text">Software Systems Lab</p>
+                    </div>
+                </div>
+            </button>
+        </div>
+      </div>
+  </div>
+</div>
+
+<div class="section">
+    Assignments
+</div>
+
 <ol>Assignments
     <li><a href="assignments">Assgn1</a></li>
     <li><a href="assignments">Assgn2</a></li>
