@@ -1,19 +1,130 @@
 <!-- templates/dashboard.html-->
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
 
-<ol>  courses
-    <li> <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">course 1</a></li>
-    <li><a href="courses">course 2</a></li>
-    <li><a href="courses"> course3</a></li>
-</ol>
-(Align assignments to the right)
-<ol>Assignments
-    <li><a href="assignments">Assgn1</a></li>
-    <li><a href="assignments">Assgn2</a></li>
-</ol>
+<span style="float: right;">
+  <button class="btn btn-outline-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+    aria-controls="offcanvasRight">View Assignments</button>
+</span>
+
+<div class="section">
+  Courses
+</div>
+
+
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <h5 id="offcanvasRightLabel">Assignments</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="list-group">
+      <li class="list-group-item"><a class="list-group-item list-group-item-action" href="{% url 'assignments' %}">Assignment 1</a></li>
+      <li class="list-group-item"><a class="list-group-item list-group-item-action" href="{% url 'assignments' %}">Assignment 2</a></li>
+      <li class="list-group-item"><a class="list-group-item list-group-item-action" href="{% url 'assignments' %}">Assignment 3</a></li>
+      <li class="list-group-item"><a class="list-group-item list-group-item-action" href="{% url 'assignments' %}">Assignment 4</a></li>
+      <li class="list-group-item"><a class="list-group-item list-group-item-action" href="{% url 'assignments' %}">Assignment 5</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="border">
+
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <a href="{% url 'courses' %}">
+          <button class="gesture-detector">
+            <div class="card" style="width: 18rem;">
+              <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">CS251</h5>
+                <p class="card-text">Software Systems Lab</p>
+              </div>
+            </div>
+          </button>
+        </a>
+      </div>
+      <div class="col">
+        <a href="{% url 'courses' %}">
+          <button class="gesture-detector">
+            <div class="card" style="width: 18rem;">
+              <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">CS251</h5>
+                <p class="card-text">Software Systems Lab</p>
+              </div>
+            </div>
+          </button>
+        </a>
+      </div>
+      <div class="col">
+        <a href="{% url 'courses' %}">
+          <button class="gesture-detector">
+            <div class="card" style="width: 18rem;">
+              <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">CS251</h5>
+                <p class="card-text">Software Systems Lab</p>
+              </div>
+            </div>
+          </button>
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <p>
+
+      </p>
+    </div>
+    <div class="row">
+      <div class="col">
+        <a href="{% url 'courses' %}">
+          <button class="gesture-detector">
+            <div class="card" style="width: 18rem;">
+              <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">CS251</h5>
+                <p class="card-text">Software Systems Lab</p>
+              </div>
+            </div>
+          </button>
+        </a>
+      </div>
+      <div class="col">
+        <a href="{% url 'courses' %}">
+          <button class="gesture-detector">
+            <div class="card" style="width: 18rem;">
+              <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">CS251</h5>
+                <p class="card-text">Software Systems Lab</p>
+              </div>
+            </div>
+          </button>
+        </a>
+      </div>
+      <div class="col">
+        <a href="{% url 'courses' %}">
+          <button class="gesture-detector">
+            <div class="card" style="width: 18rem;">
+              <img src="{% static 'images/CS251.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">CS251</h5>
+                <p class="card-text">Software Systems Lab</p>
+              </div>
+            </div>
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 {% endblock %}
