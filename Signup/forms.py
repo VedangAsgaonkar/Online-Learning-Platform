@@ -4,7 +4,8 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 class SignUpForm(UserCreationForm):
-    ordered_field_names = ['username', 'Email_ID', 'Institute_Name']
+    # ordered_field_names = ['username', 'Email_ID', 'Institute_Name']
+    # username = forms.CharField(required=True)
     Email_ID = forms.EmailField(required=True)
     Institute_Name = forms.CharField(required=True)
     class Meta:
