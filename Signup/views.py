@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+#from . import urls
 from .forms import SignUpForm
 from django.contrib.auth.forms import UserCreationForm, authenticate
 from django.contrib.auth.views import LoginView
@@ -17,7 +18,7 @@ def signup_view(request):
     form = SignUpForm(request.POST)
     if form.is_valid():
         form.save()
-        first_name = form.cleaned_data.get('Email-ID')
+        first_name = form.cleaned_data.get('Email_ID')
         last_name = form.cleaned_data.get('Institute_Name')
         user = authenticate(username=username, password=password)
         login(request, user)
@@ -25,4 +26,4 @@ def signup_view(request):
     else:
         form = SignUpForm()
         context = {'form': form}
-    return render(request, 'signup.html', context)
+    return render(request, 'registration/login.html', context)

@@ -43,8 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Dashboard',
     'Signup',
+    'Dashboard',
+    
 ]
 
 MIDDLEWARE = [
@@ -75,7 +76,8 @@ TEMPLATES = [
     },
 ]
 WSGI_APPLICATION = 'CS251Project.wsgi.application'
-
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/Signup/login'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

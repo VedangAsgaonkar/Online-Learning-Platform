@@ -1,0 +1,30 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<div class="upperbody">
+  <div class="pretitle">Built by 200050013-200050130</div>
+  {% if user.is_authenticated %}
+  <div class="title">
+    <h1  class="text-success">Hi {{ user.first_name }}! Welcome to Github Profiles!</h1>
+  </div>
+  <div class="hero-cta">
+    <a href="../explore/" class="pressit">Explore</a>
+    <a href="../profile/" class="pressit">My Profile</a>
+    <a href="{% url 'logout' %}" class="pressit">Logout</a>
+  </div>
+</div>
+
+{% else %}
+<div class="title">
+  <h1 class="text-warning">You are not logged in</h1>
+</div>
+<div class="hero-cta">
+  <a href="{% url 'signup' %}" class="pressit">Signup</a>
+  <a href="{% url 'login' %}" class="pressit">Login</a>
+</div>
+{% endif %}
+{% endblock %}

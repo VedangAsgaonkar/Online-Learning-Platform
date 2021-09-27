@@ -1,8 +1,10 @@
-from django.urls import path
+from . import views
+from .views import *
+from django.contrib import admin
+from django.urls import path, include 
 
-from .views import SignUpView
-
-
-urlpatterns = [
-    path('signup/', SignUpView.as_view(), name='signup'),
+urlpatterns=[
+    path("",views.signup_view,name="home"),
+    #path("login/",include('django.contrib.auth.urls')),
+    path("signup/",views.signup_view,name="signup"),
 ]

@@ -1,0 +1,30 @@
+<!-- templates/registration/signup.html -->
+{% extends 'base.html' %}
+
+{% block title %}Signup{% endblock %}
+
+{% block content %}
+<div class="upperbody">
+    <div class="pretitle">Built by Team Bluefire</div>
+    <div class="title">
+        <h1 class="text-primary">Welcome to the Bluefire Moodle!</h1>
+    </div>
+    <div class="hero-cta">
+        <a href="../signup/" class="pressit">Signup</a>
+        <a href="../login/" class="pressit">Login</a>
+    </div>
+</div>
+
+<div class="padding">
+    <h1 class="text-secondary"> 
+        Signup with Bluefire Moodle !!
+    </h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="custom_hero-cta">
+            <button type="submit" class="pressit">Sign Up</button>
+        </div>
+</div>
+{% endblock %}
