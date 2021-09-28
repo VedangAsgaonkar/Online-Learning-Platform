@@ -29,3 +29,192 @@
     margin-left: 10%;
     border-radius: 0.5cm;
 }
+
+body{
+
+    font-family: Arial, sans-serif;
+
+    margin: 0;
+
+}
+
+
+
+.upperbody{
+
+    background-color: azure;
+
+}
+
+
+
+.pretitle{
+
+    display: flex;
+
+    justify-content: center;
+
+    color:red;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+
+    
+
+.title{
+
+    display: flex;
+
+    justify-content: center;
+    padding-bottom: 5px;
+
+}   
+
+
+
+.hero-cta{
+
+    display: flex;
+
+    justify-content: center;   
+    padding-bottom:5px;
+}
+
+
+
+.custom_hero-cta{
+
+    display: flex;
+
+}
+
+
+
+.pressit{
+
+  background-color: azure;
+
+  display: block;
+
+  width: 7.5em;
+
+  border: none;  
+
+  font-size: 16px;
+
+  cursor: pointer;
+
+  text-align: center;
+
+  text-decoration: none;
+
+  color: red;
+
+  border-radius: 4px;
+
+  padding: 14px 28px;
+
+  margin: 5px;
+  border-bottom: solid 4px #627295;
+  border-radius: 3px;
+
+
+
+}
+
+
+
+.padding{
+
+    margin-left: 100px;
+
+}
+
+
+
+.userDetails{
+
+    padding-top: 10px;
+
+    margin-left: 200px;
+
+}
+
+
+
+.user_button{
+
+    display: block;
+
+    width: 10em;
+
+    border: 2px solid blue;
+
+    padding: 14px ;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    color: blue;
+
+    border-radius: 4px;
+
+    text-align: center;
+
+    border-bottom: solid 4px #627295;
+
+    border-radius: 3px;
+
+    word-wrap: break-word;
+    margin-left: 30px;
+    margin-bottom: 15px;
+
+}
+
+
+
+.pressit:active {/*on Click*/
+
+    -ms-transform: translateY(4px);
+
+    -webkit-transform: translateY(4px);
+
+    transform: translateY(4px);/*Move down*/
+
+    border-bottom: none;/*disappears*/
+
+}
+
+
+
+
+
+.user_button:active {/*on Click*/
+
+    -ms-transform: translateY(4px);
+
+    -webkit-transform: translateY(4px);
+
+    transform: translateY(4px);/*Move down*/
+
+    border-bottom: none;/*disappears*/
+
+}
+
+
+.element1
+  {
+    text-align: left;
+    margin-left : 20px;
+    margin-top : 20px;
+  }
+.element2
+  {
+    text-align: right;
+    margin-right : 20px;
+    margin-top : 20px;
+  }
+

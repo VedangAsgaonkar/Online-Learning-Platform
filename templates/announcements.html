@@ -1,28 +1,45 @@
-<!-- templates/announcements.html-->
+<!-- templates/Announcementss.html-->
 {% extends 'base.html' %}
 {% block title %}Announcements{% endblock %}
 
 {% block content %}
 
 <center>
-<h1>COURSE CS 222</h1>
-<h2>Announcements</h2>
+<h1 class="text-primary" style="font-size: 100px;">COURSE CS 222</h1>
 </center>
 <ul>
-    <li>Announcement 1</li>
-    <li>Announcement 2</li>
-    <li>Announcement 3</li>
-    <li>Announcement 4</li>
-    <li>Announcement 5</li>
+
+
+<li class="username" class="badge bg-primary text-wrap">
+                <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcement 1</button></a>
+                <br>
+            </li>
+<li class="username" class="badge bg-primary text-wrap">
+                <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcement 2</button></a>
+                <br>
+            </li>
+<li class="username" class="badge bg-primary text-wrap">
+                <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcement 3</button></a>
+                <br>
+            </li>
+<li class="username" class="badge bg-primary text-wrap">
+                <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcement 4</button></a>
+                <br>
+            </li>
+<li class="username" class="badge bg-primary text-wrap">
+                <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcement 5</button></a>
+                <br>
+            </li>
 
     
 </ul>
+
 <br><br>
+<div class="text-info"><center>
 open each announcement link to open the respective thread.
-
-The responses may or maynot be stored in an indented format.
-
-
-
-
+</center>
+<center>
+The responses may or maynot be stored in an indented format.</center>
+</div>
+<br><br><br>
 {% endblock %}
