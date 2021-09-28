@@ -10,10 +10,27 @@
   <title>{% block title %}{{ section.title }}{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'bootstrap-4.0.0-dist/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+.flex-container {
+  display: flex;
+  justify-content: center;
   
+}
+
+.flex-container > div {
+  background-color: #f1f1f1;
+  width: 100px;
+  margin: 10px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 30px;
+}
+</style>
+
 </head>
 
 <body>
+<!--
 <p class="element1">
     <a href="#"><img src="{% static 'images/logo.png' %}" width="120" height="117"></a> 
     <span style="float:right;">
@@ -24,6 +41,21 @@
 <a href="#">Settings</a> 
 <a href="{% url 'logout' %}">Logout</a> 
 </p>
+
+
+<div class="pretitle">
+<a class="Text-Primary" style="font-size: 75px;">Welcome to Bluefire Moodle</a>
+</div>
+
+-->
+<div class="element1"><a href="#"><img src="{% static 'images/logo.png' %}" width="120" height="117"></a> </div>
+
+
+
+
+
+
+
 
 <body style="background-color: rgb(231, 219, 226)">
 
