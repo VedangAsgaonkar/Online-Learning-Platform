@@ -13,7 +13,28 @@ def index(request):
     return render(request,'dashboard.html')
 
 def courses(request):
-    return render(request,'courses.html')
+    course1 = mod.Courses(course_name = "trial 1")
+    course2 = mod.Courses(course_name = "trial 2")
+    course3 = mod.Courses(course_name = "trial 3")
+    course4 = mod.Courses(course_name = "trial 4")
+    course1.save()
+    course2.save()
+    course3.save()
+    course4.save()
+
+
+    profile1 = mod.Profile.objects.get(user = request.user)
+
+    profile1.courses.add(course1)
+    print("HERE")
+    profile1.courses.add(course2)
+    profile1.courses.add(course3)
+    profile1.courses.add(course4)
+    data = {
+        "profileq":profile1.courses.all(),
+        "course":course1.course_name
+    }
+    return render(request,'courses.html', data)
 
 def assignments(request):
     return render(request,'assignments.html')
