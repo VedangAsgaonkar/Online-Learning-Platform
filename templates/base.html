@@ -59,13 +59,22 @@ body {
 </div>
 <div class="topnav">
    
-
+{% if user.is_authenticated %}
   <a href="#">Profile</a>
   <a href="#">Settings</a>
-  <a href="#">Logout</a>
+  <a href="{% url 'logout' %}">Logout</a>
+{% else %}
+  <a href="{% url 'login' %}">Login</a>
+{% endif %}
 </div>
-{% block content %}
+{% if user.is_authenticated %}
+{% block content1 %}
     {% endblock %}
+{% else %}
+{% block content2 %}
+    {% endblock %}
+{% endif %}
+
 </body>
 </html>
 

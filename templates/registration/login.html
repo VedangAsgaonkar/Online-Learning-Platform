@@ -2,8 +2,11 @@
 {% extends 'base.html' %}
 
 {% block title %}Login{% endblock %}
+{% block content1 %}
+<center><h1><a href="{% url 'login' %}">Already Logged In</a></h1></center>
+{% endblock %}
 
-{% block content %}
+{% block content2 %}
 <div class="upperbody">
     <div class="pretitle">Built by Team Bluefire</div>
     <div class="title">

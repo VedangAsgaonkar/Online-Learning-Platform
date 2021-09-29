@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 {% block title %}Assignments{% endblock %}
 
-{% block content %}
+{% block content1 %}
 
 <center>
 <h1 class="text-primary" style="font-size: 100px;">COURSE CS 222</h1>
@@ -43,4 +43,8 @@ Fetch the responses from a master database, storing assignment data in the cours
 </center>
 </div>
 <br><br><br>
+{% endblock %}
+
+{% block content2 %}
+<center><h1><a href="{% url 'login' %}">Please Login</a></h1></center>
 {% endblock %}

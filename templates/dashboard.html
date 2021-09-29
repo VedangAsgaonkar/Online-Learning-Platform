@@ -3,12 +3,12 @@
 {% load static %}
 {% block title %}Dashboard{% endblock %}
 
-{% block content %}
+{% block content1 %}
 
-<span style="float: right;">
+<!-- <span style="float: right;">
   <button class="btn btn-outline-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
     aria-controls="offcanvasRight">View Assignments</button>
-</span>
+</span> -->
 <center>
 <div class="section" class="text-primary">
 
@@ -32,7 +32,7 @@
   </div>
 </div>
 -->
-
+<center>
 <div class="border">
 
   <div class="container">
@@ -125,6 +125,10 @@
     </div>
   </div>
 </div>
+</center>
 
+{% endblock %}
 
+{% block content2 %}
+<center><h1><a href="{% url 'login' %}">Please Login</a></h1></center>
 {% endblock %}
