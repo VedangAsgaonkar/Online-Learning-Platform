@@ -1,35 +1,73 @@
 <!-- templates/base.html -->
+
 <!DOCTYPE html>
 {% load static %}
-<html >
-
-<head >
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ section.title }}{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'bootstrap-4.0.0-dist/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+/* Style the header */
+.header {
+  background-color: #f1f1f1;
+  padding: 40px;
+  text-align: center;
+  color:red;
+}
+
+/* Style the top navigation bar */
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+/* Style the topnav links */
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change color on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+</style>
 </head>
-
-<body>
-<p class="element1">
-    <a href="#"><img src="{% static 'images/logo.png' %}" width="120" height="117"></a> 
-    <span style="float:right;">
-       <a href="#">Profile</a>  
-    </span>
-</p>
-<p class="element2">
-<a href="#">Settings</a> 
-<a href="{% url 'logout' %}">Logout</a> 
-</p>
-
 <body style="background-color: rgb(231, 219, 226)">
+    
+    <a style="float:left;margin-left:20px;margin-top:10px;"><img src="{% static 'images/logo.png' %}" width="120" height="117"></a>
 
-    {% block content %}
+<div class="header">
+  <h1>Built by Team Bluefire</h1>
+</div>
+<div class="topnav">
+   
+
+  <a href="#">Profile</a>
+  <a href="#">Settings</a>
+  <a href="#">Logout</a>
+</div>
+{% block content %}
     {% endblock %}
-
 </body>
-
 </html>
+
+
+
