@@ -55,7 +55,12 @@ body {
     <a style="float:left;margin-left:20px;margin-top:10px;"><img src="{% static 'images/logo.png' %}" width="120" height="117"></a>
 
 <div class="header">
+  {% if user.is_authenticated %}
+  <div style="float: right; color: darkblue;"><img src="{% static 'images/profile_icon.png' %}" width="50" height="50"><h3>{{user.username}}</h3></div>
+  {% endif %}
   <h1>Built by Team Bluefire</h1>
+ 
+</div>
 </div>
 <div class="topnav">
    
