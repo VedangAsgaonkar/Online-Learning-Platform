@@ -11,7 +11,7 @@ from django.db.models.deletion import CASCADE
 #     models.
 
 class Courses(models.Model):
-    course_name = models.CharField(max_length=100)#, primary_key=True)
+    course_name = models.CharField(max_length=100, primary_key=True)
     class Meta:
         ordering = ('course_name', )
 
@@ -19,14 +19,23 @@ class Courses(models.Model):
         return self.course_name
 
 class Profile(models.Model):
-    user = models.OneToOneField(User , on_delete = models.CASCADE)
-    courses =  models.ManyToManyField(Courses)
+    user = models.CharField(max_length=100 , primary_key = True)
+    courses =  models.ManyToManyField(Courses , through = 'Enrollment')
     # name = models.CharField(max_length=100)
     class Meta:
         ordering = ('user', )
 
     def __str__(self):
-        return self.name
+        return self.user
+
+class Enrollment(models.Model):
+    profile = models.ForeignKey(Profile , on_delete = models.CASCADE)
+    course = models.ForeignKey(Courses , on_delete = models.CASCADE)
+    grade = models.CharField(max_length = 100, blank = True , null = True)
+
+    class Meta:
+        unique_together = [['profile' , 'course']]
+
 
 # class Grades(models.Model):
 #     user = models.ForeignKey(Profile, on_delete=CASCADE)
