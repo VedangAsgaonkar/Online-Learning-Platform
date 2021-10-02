@@ -10,5 +10,6 @@ urlpatterns=[
     path("assignments/",views.assignments,name="assignments"),
     path("courses/announcements/", views.announcements,name="announcements"),
     path('courses/grades/', views.grades, name='grades'),
+    path('temp/<sample_input>', views.add_course, name = 'temp'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
