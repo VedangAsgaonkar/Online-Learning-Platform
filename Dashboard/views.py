@@ -44,6 +44,24 @@ def add_course(request, sample_input):
     print(request.user)
     print(profile1.courses.all()[0])
     print(sample_input)
+
+    if mod.Enrollment.objects.filter(profile = profile1):
+        print("Enrollment Exists")
+        enrollment = mod.Enrollment.objects.get(profile = profile1)
+    else:
+        enrollment = mod.Enrollment(profile = profile1)
+        enrollment.course = course1
+        enrollment.save()
+
+    print(enrollment.profile)
+    print(enrollment.course)
+    print(enrollment.grade)
+
+
+
+
+
+
     data = {
         "profileq":profile1.courses.all(),
         "course":course1.profile_set.all(),
