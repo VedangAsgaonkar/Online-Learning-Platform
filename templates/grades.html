@@ -5,19 +5,20 @@
 {% block content1 %}
 
 <center>
-<h1 class="text-primary" style="font-size: 100px;">COURSE CS 222</h1>
+    <h1 class="text-primary" style="font-size: 100px;">COURSE CS 222</h1>
 </center>
 <ul>
-<ul>
-    <li>Exam name, Marks obtained, feedback</li>
-    
+    <ul>
+        <li>Exam name, Marks obtained, feedback</li>
+
+    </ul>
+    <br><br>
 </ul>
-<br><br>
+<div class="text-info">
+    <center>
+        perhaps table format
 
-<div class="text-info"><center>
-perhaps table format
-
-</center>
+    </center>
 </div>
 <br><br><br>
 
@@ -26,5 +27,7 @@ perhaps table format
 {% endblock %}
 
 {% block content2 %}
-<center><h1><a href="{% url 'login' %}">Please Login</a></h1></center>
+<center>
+    <h1><a href="{% url 'login' %}">Please Login</a></h1>
+</center>
 {% endblock %}

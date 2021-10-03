@@ -24,6 +24,13 @@ def announcements(request):
 def grades(request):
     return render(request,'grades.html')
 
+def profile(request):
+    courses_list={}
+    #ADD course lists here
+    return render(request,'profile.html', courses_list)
+
+def settings(request):
+    return render(request,'settings.html') 
 
 def add_course(request, sample_input):
     if(mod.Courses.objects.filter(course_name = "trial 1a")):

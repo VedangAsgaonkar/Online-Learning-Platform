@@ -5,45 +5,53 @@
 {% block content1 %}
 
 <center>
-<h1 class="text-primary" style="font-size: 100px;">COURSE CS 222</h1>
+    <h1 class="text-primary" style="font-size: 100px;">COURSE CS 222</h1>
 </center>
 <ul>
 
 
-<li class="username" class="badge bg-primary text-wrap">
-                <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcement 1</button></a>
-                <br>
-            </li>
-<li class="username" class="badge bg-primary text-wrap">
-                <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcement 2</button></a>
-                <br>
-            </li>
-<li class="username" class="badge bg-primary text-wrap">
-                <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcement 3</button></a>
-                <br>
-            </li>
-<li class="username" class="badge bg-primary text-wrap">
-                <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcement 4</button></a>
-                <br>
-            </li>
-<li class="username" class="badge bg-primary text-wrap">
-                <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcement 5</button></a>
-                <br>
-            </li>
+    <li class="username" class="badge bg-primary text-wrap">
+        <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+            Announcement 1</button></a>
+        <br>
+    </li>
+    <li class="username" class="badge bg-primary text-wrap">
+        <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+            Announcement 2</button></a>
+        <br>
+    </li>
+    <li class="username" class="badge bg-primary text-wrap">
+        <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+            Announcement 3</button></a>
+        <br>
+    </li>
+    <li class="username" class="badge bg-primary text-wrap">
+        <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+            Announcement 4</button></a>
+        <br>
+    </li>
+    <li class="username" class="badge bg-primary text-wrap">
+        <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+            Announcement 5</button></a>
+        <br>
+    </li>
 
-    
+
 </ul>
 
 <br><br>
-<div class="text-info"><center>
-open each announcement link to open the respective thread.
-</center>
-<center>
-The responses may or maynot be stored in an indented format.</center>
+<div class="text-info">
+    <center>
+        open each announcement link to open the respective thread.
+    </center>
+    <center>
+        The responses may or maynot be stored in an indented format.</center>
 </div>
 <br><br><br>
 {% endblock %}
 
 {% block content2 %}
-<center><h1><a href="{% url 'login' %}">Please Login</a></h1></center>
+<center>
+    <h1><a href="{% url 'login' %}">Please Login</a></h1>
+</center>
 {% endblock %}

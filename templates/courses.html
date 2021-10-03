@@ -5,46 +5,54 @@
 {% block content1 %}
 
 <center>
-<h1 class="text-primary" style="font-size: 100px;">COURSE CS 222</h1>
-{{ course }}
-<br>
-{{profileq}}
+    <h1 class="text-primary" style="font-size: 100px;">COURSE CS 222</h1>
+    {{ course }}
+    <br>
+    {{profileq}}
 </center>
 <ul>
 
 
-<li class="username" class="badge bg-primary text-wrap">
-                <a href="announcements" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Announcements and Posts</button></a>
-                <br>
-            </li>
-<li class="username" class="badge bg-primary text-wrap">
-                <a class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Course Content</button></a>
-                <br>
-            </li>
-<li class="username" class="badge bg-primary text-wrap">
-                <a class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Exams</button></a>
-                <br>
-            </li>
-<li class="username" class="badge bg-primary text-wrap">
-                <a class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Assignment due</button></a>
-                <br>
-            </li>
-<li class="username" class="badge bg-primary text-wrap">
-                <a href="grades" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Grades</button></a>
-                <br>
-            </li>
+    <li class="username" class="badge bg-primary text-wrap">
+        <a href="announcements" class="user_button" class="btn btn-link" button type="button"
+            style="white-space: normal;"> Announcements and Posts</button></a>
+        <br>
+    </li>
+    <li class="username" class="badge bg-primary text-wrap">
+        <a class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Course
+            Content</button></a>
+        <br>
+    </li>
+    <li class="username" class="badge bg-primary text-wrap">
+        <a class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+            Exams</button></a>
+        <br>
+    </li>
+    <li class="username" class="badge bg-primary text-wrap">
+        <a class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Assignment
+            due</button></a>
+        <br>
+    </li>
+    <li class="username" class="badge bg-primary text-wrap">
+        <a href="grades" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+            Grades</button></a>
+        <br>
+    </li>
 
-    
+
 </ul>
 
 <br><br>
-<div class="text-info"><center>
-different action perhaps for hovering and clicking
-</center>
+<div class="text-info">
+    <center>
+        different action perhaps for hovering and clicking
+    </center>
 </div>
 <br><br><br>
 {% endblock %}
 
 {% block content2 %}
-<center><h1><a href="{% url 'login' %}">Please Login</a></h1></center>
+<center>
+    <h1><a href="{% url 'login' %}">Please Login</a></h1>
+</center>
 {% endblock %}
