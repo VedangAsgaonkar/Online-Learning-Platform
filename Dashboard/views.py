@@ -1,3 +1,4 @@
+from os import name
 from django.shortcuts import render
 from django.http import HttpRequest, request
 import requests
@@ -22,6 +23,52 @@ def assignments(request):
     for asgn in mod.Assignments.objects.all():
         assignment_dict[asgn.name] = asgn.description
     return render(request,'assignments.html', {'data' : assignment_dict})
+
+def assignment_submission(request):
+    if request.method == 'POST':
+        form = forms.AssignmentSubmissionForm(request.POST, request.FILES)
+        print(form.is_valid())
+        print(form.cleaned_data.get('name'))
+        if form.is_valid():
+            if(mod.Courses.objects.filter(course_name = "trial 1a")):
+                course1 = mod.Courses.objects.get(course_name = "trial 1a")
+            else:
+                course1 = mod.Courses(course_name = "trial 1a")
+                course1.save()
+            if mod.Profile.objects.filter(user = "prats"):
+                print("Already Made")
+                profile1 = mod.Profile.objects.get(user = "prats")
+            else:
+                profile1 = mod.Profile(user = "prats")
+                profile1.save()
+
+            profile1.courses.add(course1)
+            profile1.save()
+            print("HERE")
+            print(request.user)
+            print(profile1.courses.all()[0])
+
+            if mod.Enrollment.objects.filter(profile = profile1) and mod.Enrollment.objects.filter(course = course1):
+                print("Enrollment Exists")
+                enrollment = mod.Enrollment.objects.get(profile = profile1, course = course1)
+            else:
+                enrollment = mod.Enrollment(profile = profile1)
+                enrollment.course = course1
+                enrollment.save()
+            if(mod.Assignments.objects.filter(enrollment=enrollment, name="Lab1")):
+                asgn1 = mod.Assignments.objects.get(enrollment=enrollment, name="Lab1")
+            else:
+                asgn1 = mod.Assignments(enrollment=enrollment, name="Lab1")
+                asgn1.save()
+            for file in request.FILES.getlist('files'):
+                file1 = mod.AssignmentFiles(assignment=asgn1, file=file)
+                file1.save()
+            print("all ok")
+
+        return render(request, 'assignment_submission.html', {'form' : form})
+    else:
+        form = forms.AssignmentSubmissionForm()
+    return render(request, 'assignment_submission.html', {'form' : form})
 
 def assignment_creation(request):
     if request.method == 'POST':
