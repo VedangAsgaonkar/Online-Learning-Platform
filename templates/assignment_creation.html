@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Assignments{% endblock %}
+
+{% block content1 %}
+
+<center>
+<form method="post">
+    {% csrf_token %}
+    <label>Assignment Name</label>
+    {{ form.assignment_name }}
+    <br>
+    <p></p>
+    <label>Description Name</label>
+    {{ form.description }}
+
+    <br>
+    <p></p>
+    <input type="submit" value="Submit">
+</form>
+</center>
+
+{% endblock %}
+
+{% block content2 %}
+<center>
+    <h1><a href="{% url 'login' %}">Please Login</a></h1>
+</center>
+{% endblock %}

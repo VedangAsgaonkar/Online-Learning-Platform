@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import constraints
 from django.db.models.deletion import CASCADE
+from django.db.models.expressions import Case
+
 # Create your models here.
 
 # class Student_Course(models.Model):
@@ -21,7 +23,6 @@ class Courses(models.Model):
 class Profile(models.Model):
     user = models.CharField(max_length=100 , primary_key = True)
     courses =  models.ManyToManyField(Courses , through = 'Enrollment')
-    # name = models.CharField(max_length=100)
     class Meta:
         ordering = ('user', )
 
@@ -36,6 +37,14 @@ class Enrollment(models.Model):
     class Meta:
         unique_together = [['profile' , 'course']]
 
+class Assignments(models.Model):
+    enrollment = models.ForeignKey(Enrollment, on_delete=CASCADE)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    description = models.CharField(max_length=300, blank=True, null=True)
+    
+class AssignmentFiles(models.Model):
+    assignment = models.ForeignKey(Assignments, on_delete=CASCADE)
+    file = models.FileField(upload_to="files/%Y/%m/%d")
 
 # class Grades(models.Model):
 #     user = models.ForeignKey(Profile, on_delete=CASCADE)

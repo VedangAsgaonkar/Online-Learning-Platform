@@ -5,7 +5,9 @@ from requests.exceptions import HTTPError
 from django.contrib.auth import models
 # import json
 import datetime
+import markdown
 from . import models as mod
+from . import forms 
 
 # Create your views here.
 
@@ -16,7 +18,53 @@ def courses(request):
     return render(request,'courses.html')
 
 def assignments(request):
-    return render(request,'assignments.html')
+    assignment_dict = {}
+    for asgn in mod.Assignments.objects.all():
+        assignment_dict[asgn.name] = asgn.description
+    return render(request,'assignments.html', {'data' : assignment_dict})
+
+def assignment_creation(request):
+    if request.method == 'POST':
+        form = forms.AssignmentCreationForm(request.POST)
+        if form.is_valid():
+            if(mod.Courses.objects.filter(course_name = "trial 1a")):
+                course1 = mod.Courses.objects.get(course_name = "trial 1a")
+            else:
+                course1 = mod.Courses(course_name = "trial 1a")
+                course1.save()
+            if mod.Profile.objects.filter(user = "prats"):
+                print("Already Made")
+                profile1 = mod.Profile.objects.get(user = "prats")
+            else:
+                profile1 = mod.Profile(user = "prats")
+                profile1.save()
+
+            profile1.courses.add(course1)
+            profile1.save()
+            print("HERE")
+            print(request.user)
+            print(profile1.courses.all()[0])
+
+            if mod.Enrollment.objects.filter(profile = profile1) and mod.Enrollment.objects.filter(course = course1):
+                print("Enrollment Exists")
+                enrollment = mod.Enrollment.objects.get(profile = profile1, course = course1)
+            else:
+                enrollment = mod.Enrollment(profile = profile1)
+                enrollment.course = course1
+                enrollment.save()
+
+            print(enrollment.profile)
+            print(enrollment.course)
+            print(enrollment.grade)
+            assignment = mod.Assignments(enrollment=enrollment)
+            assignment.name = form.cleaned_data.get('assignment_name')
+            assignment.description = markdown.markdown(form.cleaned_data.get('description'))
+            assignment.save()
+
+            return render(request,'assignments.html')
+    else:
+        form = forms.AssignmentCreationForm()
+    return render(request, 'assignment_creation.html',{'form':form})
 
 def announcements(request):
     return render(request,'announcements.html')
