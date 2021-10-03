@@ -26,10 +26,10 @@ def grades(request):
 
 
 def add_course(request, sample_input):
-    if(mod.Courses.objects.filter(course_name = "trial 1")):
-        course1 = mod.Courses.objects.get(course_name = "trial 1")
+    if(mod.Courses.objects.filter(course_name = "trial 1a")):
+        course1 = mod.Courses.objects.get(course_name = "trial 1a")
     else:
-        course1 = mod.Courses(course_name = "trial 1")
+        course1 = mod.Courses(course_name = "trial 1a")
         course1.save()
     if mod.Profile.objects.filter(user = "prats"):
         print("Already Made")
@@ -45,9 +45,9 @@ def add_course(request, sample_input):
     print(profile1.courses.all()[0])
     print(sample_input)
 
-    if mod.Enrollment.objects.filter(profile = profile1):
+    if mod.Enrollment.objects.filter(profile = profile1) and mod.Enrollment.objects.filter(course = course1):
         print("Enrollment Exists")
-        enrollment = mod.Enrollment.objects.get(profile = profile1)
+        enrollment = mod.Enrollment.objects.get(profile = profile1, course = course1)
     else:
         enrollment = mod.Enrollment(profile = profile1)
         enrollment.course = course1
