@@ -24,7 +24,7 @@ def assignments(request):
         assignment_dict[asgn.name] = asgn.description
     return render(request,'assignments.html', {'data' : assignment_dict})
 
-def assignment_submission(request):
+def assignment_submission(request, name):
     if request.method == 'POST':
         form = forms.AssignmentSubmissionForm(request.POST, request.FILES)
         print(form.is_valid())
@@ -65,10 +65,11 @@ def assignment_submission(request):
                 file1.save()
             print("all ok")
 
-        return render(request, 'assignment_submission.html', {'form' : form})
+        return redirect('assignments', permanent=True)
     else:
+        asgn_desc = mod.Assignments.objects.get(name=name).description
         form = forms.AssignmentSubmissionForm()
-    return render(request, 'assignment_submission.html', {'form' : form})
+    return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc})
 
 def assignment_creation(request):
     if request.method == 'POST':
