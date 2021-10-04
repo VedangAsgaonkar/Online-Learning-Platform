@@ -16,6 +16,6 @@ urlpatterns=[
     path('temp/<sample_input>', views.add_course, name = 'temp'),
     path("courses/assignments/assignment_creation", views.assignment_creation, name="assignment_creation"),
     path("courses/assignments/<str:name>/assignment_submission/", views.assignment_submission, name="assignment_submission"),
-    path("courses/<str:course_name>", views.courses, name="courses_unique"),
+    path("courses/<str:input_course_name>", views.courses, name="courses_unique"),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

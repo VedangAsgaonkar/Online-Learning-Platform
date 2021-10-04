@@ -19,8 +19,13 @@ def index(request):
     # print(courses_dict)
     return render(request,'dashboard.html', {'data' : courses_dict})
 
-def courses(request, course_name = "DEFAULT"):
-    return render(request,'courses.html', {'name':course_name})
+def courses(request, input_course_name = "DEFAULT"):
+    if(mod.Courses.objects.filter(course_name = input_course_name)):
+        course = mod.Courses.objects.get(course_name = input_course_name)
+    data={}
+    data['name'] = input_course_name
+    data['info'] = course.course_info
+    return render(request,'courses.html', data)
 
 
 def assignments(request):
@@ -128,6 +133,10 @@ def course_creation(request):
 
             try:
                 course_added = mod.Courses(course_name = form.cleaned_data.get('course_name'))
+                course_added.access_code = form.cleaned_data.get('access_code')
+                course_added.master_code = form.cleaned_data.get('master_code')
+                course_added.course_info = form.cleaned_data.get('course_info')
+
                 course_added.save()
             except Exception as e:
                 print("Course already exists, collision!")

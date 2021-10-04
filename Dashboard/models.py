@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models import constraints
 from django.db.models.deletion import CASCADE
 from django.db.models.expressions import Case
+from django.utils.translation import deactivate
 
 # Create your models here.
 
@@ -14,6 +15,10 @@ from django.db.models.expressions import Case
 
 class Courses(models.Model):
     course_name = models.CharField(max_length=100, primary_key=True)
+    course_info = models.CharField(max_length=1000, default="Course Info")
+    access_code = models.CharField(max_length=32, default="12345678")
+    master_code = models.CharField(max_length=32, default="12345678")
+
     class Meta:
         ordering = ('course_name', )
 
