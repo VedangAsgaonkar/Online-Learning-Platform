@@ -148,6 +148,7 @@ def course_creation(request):
                 profile1 = mod.Profile(user = request.user)
                 print("CREATED")
                 profile1.save()
+                profile1 = mod.Profileobjects.get(user = request.user)
 
             profile1.courses.add(course_added)
             profile1.save()
