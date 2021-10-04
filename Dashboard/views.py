@@ -1,5 +1,5 @@
 from os import name
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpRequest, request
 import requests
 from requests.exceptions import HTTPError
@@ -106,9 +106,10 @@ def assignment_creation(request):
             assignment = mod.Assignments(enrollment=enrollment)
             assignment.name = form.cleaned_data.get('assignment_name')
             assignment.description = markdown.markdown(form.cleaned_data.get('description'))
+            print(markdown.markdown(form.cleaned_data.get('description')))
             assignment.save()
 
-            return render(request,'assignments.html')
+            return redirect('assignments', permanent=True)
     else:
         form = forms.AssignmentCreationForm()
     return render(request, 'assignment_creation.html',{'form':form})

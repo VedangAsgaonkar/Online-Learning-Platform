@@ -40,7 +40,7 @@ class Enrollment(models.Model):
 class Assignments(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=CASCADE)
     name = models.CharField(max_length=100, blank=True, null=True)
-    description = models.CharField(max_length=300, blank=True, null=True)
+    description = models.CharField(max_length=1200, blank=True, null=True)
     
 class AssignmentFiles(models.Model):
     assignment = models.ForeignKey(Assignments, on_delete=CASCADE)

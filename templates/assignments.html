@@ -14,27 +14,27 @@
 
 
     <li class="username" class="badge bg-primary text-wrap">
-        <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+        <a href="assignment_submission" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
             Assignment 1</button></a>
         <br>
     </li>
     <li class="username" class="badge bg-primary text-wrap">
-        <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+        <a href="assignment_submission" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
             Assignment 2</button></a>
         <br>
     </li>
     <li class="username" class="badge bg-primary text-wrap">
-        <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+        <a href="assignment_submission" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
             Assignment 3</button></a>
         <br>
     </li>
     <li class="username" class="badge bg-primary text-wrap">
-        <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+        <a href="assignment_submission" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
             Assignment 4</button></a>
         <br>
     </li>
     <li class="username" class="badge bg-primary text-wrap">
-        <a href="./{{User}}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+        <a href="assignment_submission" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
             Assignment 5</button></a>
         <br>
     </li>
@@ -46,7 +46,7 @@
     {% for name,assignment in data.items %}
         <li>
             <h1>{{name}}</h1>
-            <p>{{ assignment|safe }}</p>
+            <p>{{ assignment|safe}}</p>
         </li>
     {% endfor %}
 </ul>
