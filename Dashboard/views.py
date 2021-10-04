@@ -13,10 +13,15 @@ from . import forms
 # Create your views here.
 
 def index(request):
-    return render(request,'dashboard.html')
+    courses_dict = {}
+    for course in mod.Courses.objects.all():
+        courses_dict[course.course_name] = "course.info"
+    # print(courses_dict)
+    return render(request,'dashboard.html', {'data' : courses_dict})
 
-def courses(request):
-    return render(request,'courses.html')
+def courses(request, course_name = "DEFAULT"):
+    return render(request,'courses.html', {'name':course_name})
+
 
 def assignments(request):
     assignment_dict = {}
@@ -114,6 +119,50 @@ def assignment_creation(request):
     else:
         form = forms.AssignmentCreationForm()
     return render(request, 'assignment_creation.html',{'form':form})
+    
+def course_creation(request):
+    if request.method == 'POST':
+        print("HELLO")
+        form = forms.CourseCreationForm(request.POST)
+        if form.is_valid():
+
+            try:
+                course_added = mod.Courses(course_name = form.cleaned_data.get('course_name'))
+                course_added.save()
+            except Exception as e:
+                print("Course already exists, collision!")
+
+            if mod.Profile.objects.filter(user = request.user):
+                print("Already Made")
+                profile1 = mod.Profile.objects.get(user = request.user)
+            else:
+                profile1 = mod.Profile(user = request.user)
+                print("CREATED")
+                profile1.save()
+
+            profile1.courses.add(course_added)
+            profile1.save()
+            print("HERE")
+            print(request.user)
+            print(profile1.courses.all()[0])
+
+            if mod.Enrollment.objects.filter(profile = profile1) and mod.Enrollment.objects.filter(course = course_added):
+                print("Enrollment Exists")
+                enrollment = mod.Enrollment.objects.get(profile = profile1, course = course_added)
+            else:
+                enrollment = mod.Enrollment(profile = profile1)
+                enrollment.course = course_added
+                enrollment.save()
+
+            print(enrollment.profile)
+            print(enrollment.course)
+            print(enrollment.grade)
+
+        return redirect('dashboard', permanent=True)
+    else:
+        form = forms.CourseCreationForm()
+        return render(request, 'course_creation.html', {'form':form})
+        
 
 def announcements(request):
     return render(request,'announcements.html')
@@ -128,6 +177,9 @@ def profile(request):
 
 def settings(request):
     return render(request,'settings.html') 
+
+
+
 
 def add_course(request, sample_input):
     if(mod.Courses.objects.filter(course_name = "trial 1a")):
@@ -160,17 +212,14 @@ def add_course(request, sample_input):
     print(enrollment.profile)
     print(enrollment.course)
     print(enrollment.grade)
-
-
-
-
-
-
     data = {
         "profileq":profile1.courses.all(),
         "course":course1.profile_set.all(),
     }
     return render(request, 'courses.html', data)
+
+
+
 
 def create_profile():
     new_profile = mod.Profile(user = request.user)
