@@ -26,22 +26,6 @@
     </div>
 </center>
 
-<!--
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-  <div class="offcanvas-header">
-    
-  </div>
-  <div class="offcanvas-body">
-    
-      <div class="user_button"><a href="{% url 'assignments' %}">Assignment 1</a></div>
-      <div class="user_button"><a href="{% url 'assignments' %}">Assignment 1</a></div>    
-      <div class="user_button"><a href="{% url 'assignments' %}">Assignment 1</a></div>
-      <div class="user_button"><a href="{% url 'assignments' %}">Assignment 1</a></div>
-
-  </div>
-</div>
--->
-
 {% for name, info in data.items %}
 <li class="username" class="badge bg-primary text-wrap">
     <a href="{% url 'courses_unique' name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
@@ -49,7 +33,7 @@
     <br>
 </li>
 {% endfor %}
-
+<!-- 
 <center>
   <div class="border">
 
@@ -143,7 +127,7 @@
       </div>
     </div>
   </div>
-</center>
+</center> -->
 
 {% endblock %}
 

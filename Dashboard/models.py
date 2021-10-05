@@ -5,14 +5,6 @@ from django.db.models.deletion import CASCADE
 from django.db.models.expressions import Case
 from django.utils.translation import deactivate
 
-# Create your models here.
-
-# class Student_Course(models.Model):
-#     pair = models.CharField(max_length=1000),
-#     Student|Course
-#     # to access a students courses, iterate through all the entries of this model.
-#     models.
-
 class Courses(models.Model):
     course_name = models.CharField(max_length=100, primary_key=True)
     course_info = models.CharField(max_length=1000, default="Course Info")
@@ -43,23 +35,10 @@ class Enrollment(models.Model):
         unique_together = [['profile' , 'course']]
 
 class Assignments(models.Model):
-    enrollment = models.ForeignKey(Enrollment, on_delete=CASCADE)
+    course = models.ForeignKey(Courses , on_delete = models.CASCADE, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     description = models.CharField(max_length=1200, blank=True, null=True)
     
 class AssignmentFiles(models.Model):
     assignment = models.ForeignKey(Assignments, on_delete=CASCADE)
     file = models.FileField(upload_to="files/%Y/%m/%d")
-
-# class Grades(models.Model):
-#     user = models.ForeignKey(Profile, on_delete=CASCADE)
-#     course = models.CharField(max_length=100)
-#     quiz = models.CharField(max_length=100)
-#     grade = models.CharField(max_length=100)
-#     feedback = models.CharField(max_length=100)
-#     file = models.FileField(upload_to='uploads/') #change the url
-
-#     class Meta:
-#         constraints = [
-#             models.UniqueConstraint(fields=['user','course','quiz'], name='user_course_quiz_grades'),
-#         ]

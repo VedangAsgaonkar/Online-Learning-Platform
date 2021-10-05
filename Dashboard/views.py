@@ -32,99 +32,48 @@ def courses(request, input_course_name = "DEFAULT"):
     data['info'] = course.course_info
     return render(request,'courses.html', data)
 
-def assignments(request):
+def assignments(request, course_name):
     assignment_dict = {}
-    for asgn in mod.Assignments.objects.all():
-        assignment_dict[asgn.name] = asgn.description
-    return render(request,'assignments.html', {'data' : assignment_dict})
+    course = mod.Courses.objects.get(course_name = course_name)
+    if(mod.Assignments.objects.filter(course=course)):
+        for asgn in mod.Assignments.objects.all() :
+            if(asgn.course == course):
+                assignment_dict[asgn.name] = asgn.description
+    return render(request,'assignments.html', {'data' : assignment_dict, 'course' : course_name})
 
-def assignment_submission(request, name):
+def assignment_submission(request, course_name ,name):
     if request.method == 'POST':
         form = forms.AssignmentSubmissionForm(request.POST, request.FILES)
         print(form.is_valid())
         print(form.cleaned_data.get('name'))
         if form.is_valid():
-            if(mod.Courses.objects.filter(course_name = "trial 1a")):
-                course1 = mod.Courses.objects.get(course_name = "trial 1a")
-            else:
-                course1 = mod.Courses(course_name = "trial 1a")
-                course1.save()
-            if mod.Profile.objects.filter(user = "prats"):
-                print("Already Made")
-                profile1 = mod.Profile.objects.get(user = "prats")
-            else:
-                profile1 = mod.Profile(user = "prats")
-                profile1.save()
 
-            profile1.courses.add(course1)
-            profile1.save()
-            print("HERE")
-            print(request.user)
-            print(profile1.courses.all()[0])
-
-            if mod.Enrollment.objects.filter(profile = profile1) and mod.Enrollment.objects.filter(course = course1):
-                print("Enrollment Exists")
-                enrollment = mod.Enrollment.objects.get(profile = profile1, course = course1)
-            else:
-                enrollment = mod.Enrollment(profile = profile1)
-                enrollment.course = course1
-                enrollment.save()
-            if(mod.Assignments.objects.filter(enrollment=enrollment, name="Lab1")):
-                asgn1 = mod.Assignments.objects.get(enrollment=enrollment, name="Lab1")
-            else:
-                asgn1 = mod.Assignments(enrollment=enrollment, name="Lab1")
-                asgn1.save()
+            assignment = mod.Assignments.objects.get(course = course_name, name=name)
             for file in request.FILES.getlist('files'):
-                file1 = mod.AssignmentFiles(assignment=asgn1, file=file)
+                file1 = mod.AssignmentFiles(assignment=assignment, file=file)
                 file1.save()
             print("all ok")
 
-        return redirect('assignments', permanent=True)
+        return redirect('assignments', course_name=course_name ,permanent=True)
     else:
         asgn_desc = mod.Assignments.objects.get(name=name).description
         form = forms.AssignmentSubmissionForm()
     return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc})
 
-def assignment_creation(request):
+def assignment_creation(request, course_name):
+    print("In here")
     if request.method == 'POST':
         form = forms.AssignmentCreationForm(request.POST)
         if form.is_valid():
-            if(mod.Courses.objects.filter(course_name = "trial 1a")):
-                course1 = mod.Courses.objects.get(course_name = "trial 1a")
-            else:
-                course1 = mod.Courses(course_name = "trial 1a")
-                course1.save()
-            if mod.Profile.objects.filter(user = "prats"):
-                print("Already Made")
-                profile1 = mod.Profile.objects.get(user = "prats")
-            else:
-                profile1 = mod.Profile(user = "prats")
-                profile1.save()
-
-            profile1.courses.add(course1)
-            profile1.save()
-            print("HERE")
-            print(request.user)
-            print(profile1.courses.all()[0])
-
-            if mod.Enrollment.objects.filter(profile = profile1) and mod.Enrollment.objects.filter(course = course1):
-                print("Enrollment Exists")
-                enrollment = mod.Enrollment.objects.get(profile = profile1, course = course1)
-            else:
-                enrollment = mod.Enrollment(profile = profile1)
-                enrollment.course = course1
-                enrollment.save()
-
-            print(enrollment.profile)
-            print(enrollment.course)
-            print(enrollment.grade)
-            assignment = mod.Assignments(enrollment=enrollment)
+            course1 = mod.Courses.objects.get(course_name = course_name)
+            assignment = mod.Assignments(course=course1)
             assignment.name = form.cleaned_data.get('assignment_name')
             assignment.description = markdown.markdown(form.cleaned_data.get('description'))
             print(markdown.markdown(form.cleaned_data.get('description')))
             assignment.save()
+            print("fine")
 
-            return redirect('assignments', permanent=True)
+            return redirect('assignments', course_name = course_name,permanent=True)
     else:
         form = forms.AssignmentCreationForm()
     return render(request, 'assignment_creation.html',{'form':form})
@@ -134,7 +83,7 @@ def course_creation(request):
         print("HELLO")
         form = forms.CourseCreationForm(request.POST)
         if form.is_valid():
-
+            print(form.cleaned_data.get('course_name'))
             try:
                 course_added = mod.Courses(course_name = form.cleaned_data.get('course_name'))
                 course_added.access_code = form.cleaned_data.get('access_code')
