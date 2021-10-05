@@ -14,7 +14,12 @@ from . import forms
 
 def index(request):
     courses_dict = {}
-    for course in mod.Courses.objects.all():
+    if mod.Profile.objects.filter(user = request.user):
+        profile = mod.Profile.objects.get(user = request.user)
+    else:
+        profile = mod.Profile(user = request.user)
+        profile.save()
+    for course in profile.courses.all():
         courses_dict[course.course_name] = "course.info"
     # print(courses_dict)
     return render(request,'dashboard.html', {'data' : courses_dict})
@@ -26,7 +31,6 @@ def courses(request, input_course_name = "DEFAULT"):
     data['name'] = input_course_name
     data['info'] = course.course_info
     return render(request,'courses.html', data)
-
 
 def assignments(request):
     assignment_dict = {}
@@ -173,6 +177,34 @@ def course_creation(request):
         form = forms.CourseCreationForm()
         return render(request, 'course_creation.html', {'form':form})
         
+def course_access(request):
+    if request.method == 'POST':
+        form = forms.CourseEnrollForm(request.POST)
+        if form.is_valid():
+            profile = mod.Profile.objects.get(user = request.user)
+            if mod.Courses.objects.filter(access_code = form.cleaned_data.get('access_code')):
+                course = mod.Courses.objects.filter(access_code = form.cleaned_data.get('access_code')).first()
+                if mod.Enrollment.objects.filter(profile = profile , course= course):
+                    print("Already exists, checking for teacher role")
+                    enroll = mod.Enrollment.objects.get(profile = profile , course = course)
+                    if(course.master_code == form.cleaned_data.get('master_code')):
+                        enroll.isTeacher = True
+                        enroll.save()
+                else:
+                    enroll = mod.Enrollment(profile = profile , course = course)
+                    if(course.master_code == form.cleaned_data.get('master_code')):
+                        enroll.isTeacher = True
+                        enroll.save()
+                print('Added to course successfully')
+            else:
+                print('No course exists with access code: ', form.cleaned_data.get('access_code'))
+        return redirect('dashboard', permanent = True)
+    else:
+        form = forms.CourseEnrollForm()
+        return render(request , 'course_access.html',{'form': form})
+
+
+
 
 def announcements(request):
     return render(request,'announcements.html')

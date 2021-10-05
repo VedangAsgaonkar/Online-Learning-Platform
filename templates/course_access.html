@@ -1,0 +1,29 @@
+<!-- templates/course_access.html -->
+
+{% extends 'base.html' %}
+{% block title %}Join Course{% endblock %}
+
+{% block content1 %}
+
+<center>
+<form method="post">
+    {% csrf_token %}
+    <label>Access Code</label>
+    {{ form.access_code }}
+    <br>
+    <p></p>
+    <label>Master Code</label>
+    {{ form.master_code }}
+    <br>
+    <p></p>
+    <input type="submit" value="Submit">
+</form>
+</center>
+
+{% endblock %}
+
+{% block content2 %}
+<center>
+    <h1><a href="{% url 'login' %}">Please Login</a></h1>
+</center>
+{% endblock %}

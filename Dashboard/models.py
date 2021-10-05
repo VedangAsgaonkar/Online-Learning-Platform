@@ -38,7 +38,7 @@ class Enrollment(models.Model):
     profile = models.ForeignKey(Profile , on_delete = models.CASCADE)
     course = models.ForeignKey(Courses , on_delete = models.CASCADE)
     grade = models.CharField(max_length = 100, blank = True , null = True)
-
+    isTeacher = models.BooleanField(default = False)
     class Meta:
         unique_together = [['profile' , 'course']]
 
