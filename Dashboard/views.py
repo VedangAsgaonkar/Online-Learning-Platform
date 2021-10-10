@@ -4,15 +4,26 @@ from django.http import HttpRequest, request
 import requests
 from requests.exceptions import HTTPError
 from django.contrib.auth import models
+from django.contrib.auth.models import User
 # import json
 import datetime
 import markdown
 from . import models as mod
 from . import forms 
+from django.conf import settings
+from django.core.mail import send_mail
+
 
 # Create your views here.
 
 def index(request):
+    subject = 'welcome to GFG world'
+    message = f'Hi {request.user.username}, thank you for registering in geeksforgeeks.'
+    EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
+    email_from = EMAIL_HOST_USER
+    recipient_list = ['vedanga2015@gmail.com', ]
+    send_mail( subject, message, email_from, recipient_list )
+
     courses_dict = {}
     if mod.Profile.objects.filter(user = request.user):
         profile = mod.Profile.objects.get(user = request.user)
