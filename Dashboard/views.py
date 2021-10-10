@@ -175,7 +175,7 @@ def course_email(request, course_name):
             email_from = EMAIL_HOST_USER
             recipient_list = email_list
             send_mail( subject, message, email_from, recipient_list )           
-        return render(request , 'course_email.html',{'form': form}) 
+        return redirect('dashboard', permanent = True)
     else:
         form = forms.CourseEmailForm()
         return render(request , 'course_email.html',{'form': form})   
