@@ -15,7 +15,7 @@ class CourseCreationForm(forms.Form):
 
 class CourseEnrollForm(forms.Form):
     access_code = forms.CharField(min_length=8, max_length=32)
-    master_code = forms.CharField(min_length=8, max_length=32)
+    master_code = forms.CharField(min_length=8, max_length=32, required=False)
 
 class CourseEmailForm(forms.Form):
     emaillist = forms.CharField(widget=forms.Textarea)

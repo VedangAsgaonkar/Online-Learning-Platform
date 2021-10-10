@@ -72,6 +72,9 @@ def assignment_submission(request, course_name ,name):
     return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc})
 
 def assignment_creation(request, course_name):
+    enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
+    if enrollment.isTeacher == False:
+        return redirect('assignments', course_name = course_name,permanent=True)
     print("In here")
     if request.method == 'POST':
         form = forms.AssignmentCreationForm(request.POST)
