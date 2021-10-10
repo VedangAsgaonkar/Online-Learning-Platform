@@ -17,12 +17,12 @@ from django.core.mail import send_mail
 # Create your views here.
 
 def index(request):
-    subject = 'welcome to GFG world'
-    message = f'Hi {request.user.username}, thank you for registering in geeksforgeeks.'
-    EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
-    email_from = EMAIL_HOST_USER
-    recipient_list = ['vedanga2015@gmail.com', ]
-    send_mail( subject, message, email_from, recipient_list )
+    # subject = 'welcome to GFG world'
+    # message = f'Hi {request.user.username}, thank you for registering in geeksforgeeks.'
+    # EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
+    # email_from = EMAIL_HOST_USER
+    # recipient_list = ['vedanga2015@gmail.com', ]
+    # send_mail( subject, message, email_from, recipient_list )
 
     courses_dict = {}
     if mod.Profile.objects.filter(user = request.user):
@@ -163,8 +163,22 @@ def course_access(request):
         form = forms.CourseEnrollForm()
         return render(request , 'course_access.html',{'form': form})
 
-
-
+def course_email(request, course_name):
+    if request.method == 'POST':
+        form = forms.CourseEmailForm(request.POST)
+        if form.is_valid():
+            course = mod.Courses.objects.get(course_name=course_name)
+            email_list = [s.strip() for s in form.cleaned_data.get('emaillist').split(",")]
+            subject = 'Course access code for course '+course_name
+            message = 'Hi. This is an email giving you access to course '+course_name+'. Your access code is : ' + course.access_code
+            EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
+            email_from = EMAIL_HOST_USER
+            recipient_list = email_list
+            send_mail( subject, message, email_from, recipient_list )           
+        return render(request , 'course_email.html',{'form': form}) 
+    else:
+        form = forms.CourseEmailForm()
+        return render(request , 'course_email.html',{'form': form})   
 
 def announcements(request):
     return render(request,'announcements.html')
