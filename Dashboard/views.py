@@ -1,4 +1,5 @@
 from os import name
+from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from django.http import HttpRequest, request
 import requests
@@ -54,6 +55,7 @@ def assignments(request, course_name):
 
 def assignment_submission(request, course_name ,name):
     if request.method == 'POST':
+        print("TEST")
         form = forms.AssignmentSubmissionForm(request.POST, request.FILES)
         print(form.is_valid())
         print(form.cleaned_data.get('name'))
@@ -67,9 +69,26 @@ def assignment_submission(request, course_name ,name):
 
         return redirect('assignments', course_name=course_name ,permanent=True)
     else:
-        asgn_desc = mod.Assignments.objects.get(name=name).description
-        form = forms.AssignmentSubmissionForm()
-    return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc})
+        enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
+        if enrollment.isTeacher==True:
+            return render(request, 'assignment_download.html')
+        else:
+            asgn_desc = mod.Assignments.objects.get(name=name).description
+            form = forms.AssignmentSubmissionForm()
+            return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc})
+
+
+def download_file(request):
+    # fill these variables with real values
+    fl_path = '/file/path'
+    filename = 'downloaded_file_name.extension'
+
+    fl = open(fl_path, 'r')
+    mime_type, _ = mimetypes.guess_type(fl_path)
+    response = HttpResponse(fl, content_type=mime_type)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+        return response
+
 
 def assignment_creation(request, course_name):
     enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)

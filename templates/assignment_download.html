@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Assignments Download{% endblock %}
+
+{% block content1 %}
+<div style="margin-left: 2cm;">
+    {{asgn|safe}}
+</div>
+
+<div style="margin-left: 2cm; margin-top: 4cm;">
+<h2>Download all Submissions</h2>
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Download">
+</form>
+</div>
+
+{% endblock %}
+
+{% block content2 %}
+<center>
+    <h1><a href="{% url 'login' %}">Please Login</a></h1>
+</center>
+{% endblock %}
