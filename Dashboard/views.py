@@ -89,7 +89,15 @@ def assignment_download(request,course_name,name):
         zip_file = open(output_filename+'.zip', 'rb')
         return FileResponse(zip_file, filename=course_name+'_'+name+'_submissions.zip')
     else:
-        return render(request, 'assignment_download.html')
+        fl_path = 'files/'+course_name+'/'+name
+        cmd = "ls './" + fl_path + "'"
+        try:
+            subs = get_immediate_subdirectories(fl_path)
+        except:
+            subs = []
+        
+        asgn_desc = mod.Assignments.objects.get(course = course_name,name=name).description
+        return render(request, 'assignment_download.html', {'asgn' : asgn_desc, 'subs':subs})
 
 
 def assignment_creation(request, course_name):
@@ -260,6 +268,10 @@ def add_course(request, sample_input):
     }
     return render(request, 'courses.html', data)
 
+
+def get_immediate_subdirectories(a_dir):
+    return [name for name in os.listdir(a_dir)
+            if os.path.isdir(os.path.join(a_dir, name))]
 
 def create_profile():
     new_profile = mod.Profile(user = request.user)
