@@ -33,7 +33,8 @@ def index(request):
         profile = mod.Profile(user = request.user)
         profile.save()
     for course in profile.courses.all():
-        courses_dict[course.course_name] = "course.info"
+        print(course.course_name)
+        courses_dict[course.course_name] = course.course_info
     # print(courses_dict)
     return render(request,'dashboard.html', {'data' : courses_dict})
 
@@ -75,7 +76,7 @@ def assignment_submission(request, course_name ,name):
         if enrollment.isTeacher==True:
             return render(request, 'assignment_download.html')
         else:
-            asgn_desc = mod.Assignments.objects.get(name=name).description
+            asgn_desc = mod.Assignments.objects.get(course = course_name,name=name).description
             form = forms.AssignmentSubmissionForm()
             return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc})
 
@@ -147,9 +148,12 @@ def course_creation(request):
             if mod.Enrollment.objects.filter(profile = profile1) and mod.Enrollment.objects.filter(course = course_added):
                 print("Enrollment Exists")
                 enrollment = mod.Enrollment.objects.get(profile = profile1, course = course_added)
+                enrollment.isTeacher = True
+                enrollment.save()
             else:
                 enrollment = mod.Enrollment(profile = profile1)
                 enrollment.course = course_added
+                enrollment.isTeacher = True
                 enrollment.save()
 
             print(enrollment.profile)
@@ -165,9 +169,11 @@ def course_access(request):
     if request.method == 'POST':
         form = forms.CourseEnrollForm(request.POST)
         if form.is_valid():
+            print("In")
             profile = mod.Profile.objects.get(user = request.user)
             if mod.Courses.objects.filter(access_code = form.cleaned_data.get('access_code')):
                 course = mod.Courses.objects.filter(access_code = form.cleaned_data.get('access_code')).first()
+                print(course.course_name)
                 if mod.Enrollment.objects.filter(profile = profile , course= course):
                     print("Already exists, checking for teacher role")
                     enroll = mod.Enrollment.objects.get(profile = profile , course = course)
@@ -178,7 +184,7 @@ def course_access(request):
                     enroll = mod.Enrollment(profile = profile , course = course)
                     if(course.master_code == form.cleaned_data.get('master_code')):
                         enroll.isTeacher = True
-                        enroll.save()
+                    enroll.save()
                 print('Added to course successfully')
             else:
                 print('No course exists with access code: ', form.cleaned_data.get('access_code'))
