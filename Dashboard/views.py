@@ -15,7 +15,7 @@ from . import models as mod
 from . import forms 
 from django.conf import settings
 from django.core.mail import send_mail
-
+import pandas as pd
 
 # Create your views here.
 
@@ -63,9 +63,10 @@ def assignment_submission(request, course_name ,name):
         if form.is_valid():
 
             assignment = mod.Assignments.objects.get(course = course_name, name=name)
+            # enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
             for file in request.FILES.getlist('files'):
                 file_name = course_name+'/'+name+'/'+str(request.user)
-                file1 = mod.AssignmentFiles(assignment=assignment, file_name = file_name ,file=file)
+                file1 = mod.AssignmentFiles(assignment=assignment, file_name = file_name ,file=file, profile = mod.Profile.objects.get(user = request.user))
                 file1.save()
             print("all ok")
 
@@ -77,7 +78,10 @@ def assignment_submission(request, course_name ,name):
         else:
             asgn_desc = mod.Assignments.objects.get(course = course_name,name=name).description
             form = forms.AssignmentSubmissionForm()
-            return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc})
+            if mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)):
+                asgn_file = mod.AssignmentFiles.objects.get(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user))
+                return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade})
+            return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': " "} )
 
 
 def assignment_download(request,course_name,name):
@@ -97,7 +101,27 @@ def assignment_download(request,course_name,name):
             subs = []
         
         asgn_desc = mod.Assignments.objects.get(course = course_name,name=name).description
-        return render(request, 'assignment_download.html', {'asgn' : asgn_desc, 'subs':subs})
+        return render(request, 'assignment_download.html', {'asgn' : asgn_desc, 'subs':subs , 'course_name': course_name , 'name':name })
+
+
+def assignment_feedback(request,course_name,name):
+    if request.method=='POST':
+        form = forms.AssignmentFeedbackForm(request.POST, request.FILES)
+        if(form.is_valid()):
+            assignment = mod.Assignments.objects.get(course = course_name , name = name)
+            assignment_files = mod.AssignmentFiles.objects.filter(assignment = assignment)
+            file = request.FILES.getlist('feedback_file')[0]
+            ds = pd.read_csv(file)
+            for i in ds.index:
+                assignment_profile = assignment_files.get(profile = mod.Profile.objects.get(user = ds['name'][i]))
+                assignment_profile.feedback = ds['feedback'][i]
+                assignment_profile.grade = ds['grade'][i]
+                assignment_profile.save()
+            return redirect('assignments', course_name = course_name,permanent=True)
+    else :
+        form = forms.AssignmentFeedbackForm()
+        return render(request,'feedback.html' , {'form': form})
+
 
 
 def assignment_creation(request, course_name):

@@ -19,3 +19,7 @@ class CourseEnrollForm(forms.Form):
 
 class CourseEmailForm(forms.Form):
     emaillist = forms.CharField(widget=forms.Textarea)
+
+class AssignmentFeedbackForm(forms.Form):
+    feedback_file = forms.FileField(widget=forms.ClearableFileInput())
+

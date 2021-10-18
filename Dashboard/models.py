@@ -46,3 +46,7 @@ class AssignmentFiles(models.Model):
     assignment = models.ForeignKey(Assignments, on_delete=CASCADE)
     file_name = models.CharField(max_length=100, default="files/vedang")
     file = models.FileField(upload_to=getFileName)
+    profile = models.ForeignKey(Profile , null = True,on_delete=CASCADE)
+    feedback = models.CharField(max_length = 100, default="No feedback yet", null=True, blank = True)
+    grade = models.CharField(max_length = 100,default="Not graded yet", null=True, blank = True)
+
