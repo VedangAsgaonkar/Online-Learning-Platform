@@ -38,7 +38,11 @@ class Assignments(models.Model):
     course = models.ForeignKey(Courses , on_delete = models.CASCADE, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     description = models.CharField(max_length=1200, blank=True, null=True)
-    
+
+def getFileName(instance, filename):
+    return 'files/'+instance.file_name+'/'+filename
+
 class AssignmentFiles(models.Model):
     assignment = models.ForeignKey(Assignments, on_delete=CASCADE)
-    file = models.FileField(upload_to="files/%Y/%m/%d")
+    file_name = models.CharField(max_length=100, default="files/vedang")
+    file = models.FileField(upload_to=getFileName)

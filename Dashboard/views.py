@@ -1,4 +1,5 @@
 from os import name
+import os
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from django.http import HttpRequest, request
@@ -63,7 +64,8 @@ def assignment_submission(request, course_name ,name):
 
             assignment = mod.Assignments.objects.get(course = course_name, name=name)
             for file in request.FILES.getlist('files'):
-                file1 = mod.AssignmentFiles(assignment=assignment, file=file)
+                file_name = course_name+'/'+name+'/'+str(request.user)
+                file1 = mod.AssignmentFiles(assignment=assignment, file_name = file_name ,file=file)
                 file1.save()
             print("all ok")
 
@@ -87,7 +89,7 @@ def download_file(request):
     mime_type, _ = mimetypes.guess_type(fl_path)
     response = HttpResponse(fl, content_type=mime_type)
     response['Content-Disposition'] = "attachment; filename=%s" % filename
-        return response
+    return response
 
 
 def assignment_creation(request, course_name):
