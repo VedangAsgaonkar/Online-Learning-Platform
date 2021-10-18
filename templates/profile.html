@@ -9,15 +9,25 @@
 </center>
 <ul>
     <ul>
+        <li> {{user.member.email_id}}</li>
+        <li>{{user.member.institute_name}} </li>
         <li>Courses List</li>
+        <ul>{% for key in courses_list%}
+            <li> {{key}}   </li>
 
+            {% endfor %}
+        </ul>
     </ul>
     <br><br>
 </ul>
 
+<div>
+   
+</div>
+
+
 <div class="text-info">
     <center>
-        perhaps table format
 
     </center>
 </div>
