@@ -17,8 +17,8 @@ urlpatterns=[
     path('courses/<str:course_name>/assignments',views.assignments,name="assignments"),
     path("courses/<str:course_name>/assignments/assignment_creation", views.assignment_creation, name="assignment_creation"),
     path("courses/<str:course_name>/assignments/<str:name>/assignment_submission/", views.assignment_submission, name="assignment_submission"),
+    path("courses/<str:course_name>/assignments/<str:name>/assignment_download/", views.assignment_download, name="assignment_download"),
     path("profile/",views.profile,name="profile"),
     path("settings/",views.settings,name="settings"),
-    path('<str:filepath>/', views.download_file),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

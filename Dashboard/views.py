@@ -1,6 +1,7 @@
 from os import name
+import shutil
 import os
-from django.http.response import HttpResponse
+from django.http.response import FileResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.http import HttpRequest, request
 import requests
@@ -19,13 +20,6 @@ from django.core.mail import send_mail
 # Create your views here.
 
 def index(request):
-    # subject = 'welcome to GFG world'
-    # message = f'Hi {request.user.username}, thank you for registering in geeksforgeeks.'
-    # EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
-    # email_from = EMAIL_HOST_USER
-    # recipient_list = ['vedanga2015@gmail.com', ]
-    # send_mail( subject, message, email_from, recipient_list )
-
     courses_dict = {}
     if mod.Profile.objects.filter(user = request.user):
         profile = mod.Profile.objects.get(user = request.user)
@@ -49,11 +43,16 @@ def courses(request, input_course_name = "DEFAULT"):
 def assignments(request, course_name):
     assignment_dict = {}
     course = mod.Courses.objects.get(course_name = course_name)
+    enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
+    if enrollment.isTeacher:
+        teacher = True
+    else:
+        teacher = False
     if(mod.Assignments.objects.filter(course=course)):
         for asgn in mod.Assignments.objects.all() :
             if(asgn.course == course):
                 assignment_dict[asgn.name] = asgn.description
-    return render(request,'assignments.html', {'data' : assignment_dict, 'course' : course_name})
+    return render(request,'assignments.html', {'data' : assignment_dict, 'course' : course_name, 'teacher':teacher})
 
 def assignment_submission(request, course_name ,name):
     if request.method == 'POST':
@@ -81,16 +80,16 @@ def assignment_submission(request, course_name ,name):
             return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc})
 
 
-def download_file(request):
-    # fill these variables with real values
-    fl_path = '/file/path'
-    filename = 'downloaded_file_name.extension'
+def assignment_download(request,course_name,name):
+    if(request.method=='POST'):
+        fl_path = 'files/'+course_name+'/'+name
+        output_filename = 'zipped/zip'
+        shutil.make_archive(output_filename, 'zip', fl_path)
 
-    fl = open(fl_path, 'r')
-    mime_type, _ = mimetypes.guess_type(fl_path)
-    response = HttpResponse(fl, content_type=mime_type)
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
+        zip_file = open(output_filename+'.zip', 'rb')
+        return FileResponse(zip_file, filename=course_name+'_'+name+'_submissions.zip')
+    else:
+        return render(request, 'assignment_download.html')
 
 
 def assignment_creation(request, course_name):
@@ -224,9 +223,6 @@ def profile(request):
 def settings(request):
     return render(request,'settings.html') 
 
-
-
-
 def add_course(request, sample_input):
     if(mod.Courses.objects.filter(course_name = "trial 1a")):
         course1 = mod.Courses.objects.get(course_name = "trial 1a")
@@ -263,8 +259,6 @@ def add_course(request, sample_input):
         "course":course1.profile_set.all(),
     }
     return render(request, 'courses.html', data)
-
-
 
 
 def create_profile():
