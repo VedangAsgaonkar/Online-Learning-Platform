@@ -27,3 +27,4 @@ class EditProfile(forms.Form):
     institute_name = forms.CharField(max_length=100, required=False)
     email_id = forms.EmailField(max_length=100, required=False)
 
+

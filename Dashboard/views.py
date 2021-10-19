@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpRequest, request
 import requests
 from requests.exceptions import HTTPError
-from django.contrib.auth import models
+from django.contrib.auth import models, update_session_auth_hash
 from django.contrib.auth.models import User
 # import json
 import datetime
@@ -16,6 +16,9 @@ from . import forms
 from django.conf import settings
 from django.core.mail import send_mail
 import pandas as pd
+from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+
 
 # Create your views here.
 
@@ -351,7 +354,3 @@ def edit_profile(request):
 #        form.fields['institute_name'].initial = request.user.member.institute_name
         context = {'form': form}
         return render(request , 'settings.html', context) 
-
-
-
-
