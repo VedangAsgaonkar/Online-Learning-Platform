@@ -12,3 +12,10 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ('username', 'password1', 'password2','Email_ID', 'Institute_Name')
         field_order = ['username', 'password1', 'password2', 'Email_ID', 'Institute_Name']
+
+
+
+
+
+
+

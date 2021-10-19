@@ -23,3 +23,7 @@ class CourseEmailForm(forms.Form):
 class AssignmentFeedbackForm(forms.Form):
     feedback_file = forms.FileField(widget=forms.ClearableFileInput())
 
+class EditProfile(forms.Form):
+    institute_name = forms.CharField(max_length=100, required=False)
+    email_id = forms.EmailField(max_length=100, required=False)
+

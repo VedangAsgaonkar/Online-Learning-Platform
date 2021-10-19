@@ -7,15 +7,14 @@
 <center>
     <h1 class="text-primary" style="font-size: 100px;">Settings</h1>
 </center>
-<ul>
-    <ul>
-        <li>WHATEVER</li>
-
-    </ul>
-    <br><br>
-</ul>
-
-<br><br><br>
+<center>
+<form method="post">
+    {% csrf_token %}
+    <label>Edit your Profile Here</label><br>
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
+</center>
 
 
 

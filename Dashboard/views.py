@@ -332,3 +332,26 @@ def grant_master_role(input_course_name, access_code):
         return False
 #Need to store master_code variable inside the course
 
+
+def edit_profile(request):
+    if request.method == 'POST':
+        form = forms.EditProfile(request.POST)
+        if form.is_valid():
+            if form.cleaned_data.get('email_id') != '':
+                request.user.member.email_id = form.cleaned_data.get('email_id')
+            if form.cleaned_data.get('institute_name') != '':
+                request.user.member.institute_name = form.cleaned_data.get('institute_name')
+            request.user.save()
+        return redirect('profile', permanent = True) 
+    else:
+        form = forms.EditProfile()
+#        form.email_id = request.user.member.email_id
+#        form.institute_name = request.user.member.institute_name
+#        form.fields['email_id'].initial = request.user.member.email_id
+#        form.fields['institute_name'].initial = request.user.member.institute_name
+        context = {'form': form}
+        return render(request , 'settings.html', context) 
+
+
+
+
