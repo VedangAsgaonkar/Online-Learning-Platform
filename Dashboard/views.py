@@ -85,7 +85,7 @@ def assignment_submission(request, course_name ,name):
                 asgn_file = mod.AssignmentFiles.objects.get(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user))
                 return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade})
                 # change form above to editable assignment submission
-            return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': " "} )
+            return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not Graded Yet "} )
 
 
 def assignment_download(request,course_name,name):
