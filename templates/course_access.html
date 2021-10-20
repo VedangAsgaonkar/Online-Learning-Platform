@@ -6,7 +6,7 @@
 {% block content1 %}
 
 <center>
-<form method="post">
+<form method="post" style="margin-top:50px;margin-left:-15px;">
     {% csrf_token %}
     <label>Access Code</label>
     {{ form.access_code }}
