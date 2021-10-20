@@ -2,13 +2,15 @@
 {% block title %}Assignments Submission{% endblock %}
 
 {% block content1 %}
-<div style="margin-left: 2cm;">
+<div style="margin-left: 2cm; font-size: 25px; margin-top: 2cm;">
     {{asgn|safe}} <br>
+    <hr>
     Feedback : {{asgn_feedback}} <br>
     Grade : {{asgn_grade}}
+    <hr>
 </div>
 
-<div style="margin-left: 2cm; margin-top: 4cm;">
+<div style="margin-left: 2cm; margin-top: 2cm;">
 <h2>Submit files here</h2>
 <form enctype="multipart/form-data" method="post">
     {% csrf_token %}

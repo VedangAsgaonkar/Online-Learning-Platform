@@ -7,8 +7,9 @@
 </div>
 
 
-<h3>Submissions</h3>
+<hr>
 <div style="margin-left: 2cm;">
+    <h3>Submissions</h3>
 <ul>
     {% for sub in subs %}
     <li>{{sub}}</li>
@@ -24,9 +25,8 @@
     {% csrf_token %}
     <input type="submit" value="Download">
 </form>
-</div>
-<div>
-    <a href = "{% url 'feedback' course_name name %}">Here</a>
+<hr>
+<a style="font-size: 30;" href = "{% url 'feedback' course_name name %}">Give feedback</a>
 </div>
 
 {% endblock %}

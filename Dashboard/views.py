@@ -85,7 +85,7 @@ def assignment_submission(request, course_name ,name):
                 asgn_file = mod.AssignmentFiles.objects.get(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user))
                 return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade})
                 # change form above to editable assignment submission
-            return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': " "} )
+            return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet"} )
 
 
 def assignment_download(request,course_name,name):
@@ -229,21 +229,27 @@ def course_access(request):
         return render(request , 'course_access.html',{'form': form})
 
 def course_email(request, course_name):
+    enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
     if request.method == 'POST':
         form = forms.CourseEmailForm(request.POST)
         if form.is_valid():
-            course = mod.Courses.objects.get(course_name=course_name)
-            email_list = [s.strip() for s in form.cleaned_data.get('emaillist').split(",")]
-            subject = 'Course access code for course '+course_name
-            message = 'Hi. This is an email giving you access to course '+course_name+'. Your access code is : ' + course.access_code
-            EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
-            email_from = EMAIL_HOST_USER
-            recipient_list = email_list
-            send_mail( subject, message, email_from, recipient_list )           
+            if enrollment.isTeacher:
+                course = mod.Courses.objects.get(course_name=course_name)
+                email_list = [s.strip() for s in form.cleaned_data.get('emaillist').split(",")]
+                subject = 'Course access code for course '+course_name
+                message = 'Hi. This is an email giving you access to course '+course_name+'. Your access code is : ' + course.access_code
+                EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
+                email_from = EMAIL_HOST_USER
+                recipient_list = email_list
+                send_mail( subject, message, email_from, recipient_list )           
         return redirect('dashboard', permanent = True)
     else:
-        form = forms.CourseEmailForm()
-        return render(request , 'course_email.html',{'form': form})   
+        if enrollment.isTeacher:
+            form = forms.CourseEmailForm()
+            return render(request , 'course_email.html',{'form': form})   
+        else:
+            return redirect('dashboard', permanent = True)
+             
 
 def announcements(request):
     return render(request,'announcements.html')
