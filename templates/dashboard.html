@@ -10,16 +10,16 @@
     aria-controls="offcanvasRight">View Assignments</button>
 </span> -->
 
-<div style="float: center;">
+<div style="float: center; margin-left:15px;margin-top:15px;">
   <a href="{% url 'course_creation' %}">CREATE NEW COURSE</a>
 </div>
-<div style="float: center;">
+<div style="float: center;margin-left:15px;">
   <a href="{% url 'course_access' %}">JOIN A COURSE</a>
 </div>
 
 
 <center>
-  <div class="section" class="text-primary">
+  <div class="section" class="text-primary" style="margin-left:-25px;">
 
     <div class="text-primary" style="font-size: 100px;">
       Courses
@@ -27,11 +27,11 @@
 </center>
 
 {% for name, info in data.items %}
-<li class="username" class="badge bg-primary text-wrap">
+<div class="username" class="badge bg-primary text-wrap">
     <a href="{% url 'courses_unique' name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
         {{name}}</button></a>
     <br>
-</li>
+</div>
 {% endfor %}
 <!-- 
 <center>

@@ -4,15 +4,12 @@
 
 {% block content1 %}
 
-<center>
-    <h1 class="text-primary" style="font-size: 100px;">Settings</h1>
-</center>
 <hr>
 <center>
 <div style="font-size: 25px ;">
 <form method="post">
     {% csrf_token %}
-    <label>Edit your Profile Here</label><br>
+    <label class="text-secondary">Edit your Profile Here (You may choose to leave some blanks empty)</label><br>
     {{ form }}
     <input type="submit" value="Submit">
 </form>
