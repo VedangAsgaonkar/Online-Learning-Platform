@@ -89,8 +89,8 @@ def assignment_submission(request, course_name ,name):
 
 
 def assignment_download(request,course_name,name):
-    if(request.method=='POST'):
-        fl_path = 'files/'+course_name+'/'+name
+    fl_path = 'files/'+course_name+'/'+name
+    if request.method=='POST' and os.path.isdir(fl_path):
         output_filename = 'zipped/zip'
         shutil.make_archive(output_filename, 'zip', fl_path)
 
