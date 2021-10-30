@@ -18,7 +18,8 @@ class CourseEnrollForm(forms.Form):
     master_code = forms.CharField(min_length=8, max_length=32, required=False)
 
 class CourseEmailForm(forms.Form):
-    emaillist = forms.CharField(widget=forms.Textarea)
+    email_list = forms.CharField(widget=forms.Textarea)
+    master_email = forms.BooleanField()
 
 class AssignmentFeedbackForm(forms.Form):
     feedback_file = forms.FileField(widget=forms.ClearableFileInput())

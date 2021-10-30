@@ -235,9 +235,11 @@ def course_email(request, course_name):
         if form.is_valid():
             if enrollment.isTeacher:
                 course = mod.Courses.objects.get(course_name=course_name)
-                email_list = [s.strip() for s in form.cleaned_data.get('emaillist').split(",")]
-                subject = 'Course access code for course '+course_name
+                email_list = [s.strip() for s in form.cleaned_data.get('email_list').split(",")]
                 message = 'Hi. This is an email giving you access to course '+course_name+'. Your access code is : ' + course.access_code
+                if form.cleaned_data.get('master_email'):
+                    message = 'Hi. This is an email giving you access to course '+course_name+'. Your access code is : ' + course.access_code + '. Your master code is : ' + course.master_code
+                subject = 'Course access code for course '+course_name
                 EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
                 email_from = EMAIL_HOST_USER
                 recipient_list = email_list
