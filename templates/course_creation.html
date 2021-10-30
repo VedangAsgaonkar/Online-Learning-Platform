@@ -6,7 +6,7 @@
 {% block content1 %}
 
 <center>
-<form method="post">
+<form method="post" style="margin-top:25px;margin-left:-65px;">
     {% csrf_token %}
     <label>Course Name</label>
     {{ form.course_name }}
