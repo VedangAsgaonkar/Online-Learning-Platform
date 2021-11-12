@@ -20,10 +20,24 @@
     {{ form.access_code }}
     <br>
     <p></p>
+    <label>Assistant Code</label>
+    {{ form.assistant_code }}
+    <br>
+    <p></p>
     <label>Master Code</label>
     {{ form.master_code }}
     <br>
     <p></p>
+    <p>Assistant Privileges</p>
+    <label>assistant can grade assignment</label>
+    {{ form.assistant_can_grade_assignments }}
+    <br>
+    <label>assistant can create assignment</label>
+    {{ form.assistant_can_create_assignment }}
+    <br>
+    <label>assistant can add members</label>
+    {{ form.assistant_can_add_students }}
+    <br>
     <input type="submit" value="Submit">
 </form>
 </center>

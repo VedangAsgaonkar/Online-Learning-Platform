@@ -47,7 +47,7 @@ def assignments(request, course_name):
     assignment_dict = {}
     course = mod.Courses.objects.get(course_name = course_name)
     enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
-    if enrollment.isTeacher:
+    if enrollment.isTeacher or (enrollment.isAssistant and course.assistant_grading_privilege):
         teacher = True
     else:
         teacher = False
@@ -76,7 +76,8 @@ def assignment_submission(request, course_name ,name):
         return redirect('assignments', course_name=course_name ,permanent=True)
     else:
         enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
-        if enrollment.isTeacher==True:
+        course = mod.Courses.objects.get(course_name = course_name)
+        if enrollment.isTeacher==True or (enrollment.isAssistant and course.assistant_grading_privilege):
             return render(request, 'assignment_download.html')
         else:
             asgn_desc = mod.Assignments.objects.get(course = course_name,name=name).description
@@ -129,8 +130,12 @@ def assignment_feedback(request,course_name,name):
 
 
 def assignment_creation(request, course_name):
+    print('OK))))))00000')
     enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
-    if enrollment.isTeacher == False:
+    course = mod.Courses.objects.get(course_name = course_name)
+    print("OK __________")
+    if not (enrollment.isTeacher or (enrollment.isAssistant and course.assistant_creation_privilege)) :
+        print("++++++++++++++++")
         return redirect('assignments', course_name = course_name,permanent=True)
     print("In here")
     if request.method == 'POST':
@@ -154,12 +159,16 @@ def course_creation(request):
         print("HELLO")
         form = forms.CourseCreationForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data.get('course_name'))
+            print(form.cleaned_data.get('course_name'), form.cleaned_data.get('assistant_can_grade_assignments'))
             try:
                 course_added = mod.Courses(course_name = form.cleaned_data.get('course_name'))
                 course_added.access_code = form.cleaned_data.get('access_code')
                 course_added.master_code = form.cleaned_data.get('master_code')
+                course_added.assistant_code = form.cleaned_data.get('assistant_code')
                 course_added.course_info = form.cleaned_data.get('course_info')
+                course_added.assistant_adding_privilege = form.cleaned_data.get('assistant_can_add_students')
+                course_added.assistant_creation_privilege = form.cleaned_data.get('assistant_can_create_assignment')
+                course_added.assistant_grading_privilege  = form.cleaned_data.get('assistant_can_grade_assignments')
 
                 course_added.save()
             except Exception as e:
@@ -208,17 +217,27 @@ def course_access(request):
             profile = mod.Profile.objects.get(user = request.user)
             if mod.Courses.objects.filter(access_code = form.cleaned_data.get('access_code')):
                 course = mod.Courses.objects.filter(access_code = form.cleaned_data.get('access_code')).first()
-                print(course.course_name)
+                print('course',course.course_name,form.cleaned_data.get('master_code'),form.cleaned_data.get('assistant_code'))
                 if mod.Enrollment.objects.filter(profile = profile , course= course):
-                    print("Already exists, checking for teacher role")
+                    print("Already exists, checking for teacher/assistant role")
                     enroll = mod.Enrollment.objects.get(profile = profile , course = course)
                     if(course.master_code == form.cleaned_data.get('master_code')):
                         enroll.isTeacher = True
                         enroll.save()
+                    elif(course.assistant_code == form.cleaned_data.get('assistant_code')):
+                        enroll.isAssistant = True
+                        enroll.save()
+
                 else:
                     enroll = mod.Enrollment(profile = profile , course = course)
+                    print(course.master_code,course.assistant_code)
                     if(course.master_code == form.cleaned_data.get('master_code')):
                         enroll.isTeacher = True
+                        print('enrolling as teacher')
+                    elif(course.assistant_code == form.cleaned_data.get('assistant_code')):
+                        enroll.isAssistant = True
+                        print('enrolling as assistant')
+                        print(course.assistant_grading_privilege)
                     enroll.save()
                 print('Added to course successfully')
             else:
@@ -230,13 +249,16 @@ def course_access(request):
 
 def course_email(request, course_name):
     enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
+    course = mod.Courses.objects.get(course_name = course_name)
     if request.method == 'POST':
         form = forms.CourseEmailForm(request.POST)
         if form.is_valid():
-            if enrollment.isTeacher:
+            if enrollment.isTeacher or (enrollment.isAssistant and course.assistant_adding_privilege) :
                 course = mod.Courses.objects.get(course_name=course_name)
                 email_list = [s.strip() for s in form.cleaned_data.get('email_list').split(",")]
                 message = 'Hi. This is an email giving you access to course '+course_name+'. Your access code is : ' + course.access_code
+                if form.cleaned_data.get('assistant_email'):
+                    message = 'Hi. This is an email giving you access to course '+course_name+'. Your access code is : ' + course.access_code + '. Your assistant code is : ' + course.assistant_code
                 if form.cleaned_data.get('master_email'):
                     message = 'Hi. This is an email giving you access to course '+course_name+'. Your access code is : ' + course.access_code + '. Your master code is : ' + course.master_code
                 subject = 'Course access code for course '+course_name
@@ -246,7 +268,7 @@ def course_email(request, course_name):
                 send_mail( subject, message, email_from, recipient_list )           
         return redirect('dashboard', permanent = True)
     else:
-        if enrollment.isTeacher:
+        if enrollment.isTeacher or (enrollment.isAssistant and course.assistant_adding_privilege) :
             form = forms.CourseEmailForm()
             return render(request , 'course_email.html',{'form': form})   
         else:

@@ -10,6 +10,10 @@ class Courses(models.Model):
     course_info = models.CharField(max_length=1000, default="Course Info")
     access_code = models.CharField(max_length=32, default="12345678")
     master_code = models.CharField(max_length=32, default="12345678")
+    assistant_code = models.CharField(max_length=32, default="12345678")
+    assistant_grading_privilege = models.BooleanField(default = False)
+    assistant_creation_privilege = models.BooleanField(default = False)
+    assistant_adding_privilege = models.BooleanField(default = False)
 
     class Meta:
         ordering = ('course_name', )
@@ -31,6 +35,7 @@ class Enrollment(models.Model):
     course = models.ForeignKey(Courses , on_delete = models.CASCADE)
     grade = models.CharField(max_length = 100, blank = True , null = True)
     isTeacher = models.BooleanField(default = False)
+    isAssistant = models.BooleanField(default=False)
     class Meta:
         unique_together = [['profile' , 'course']]
 
