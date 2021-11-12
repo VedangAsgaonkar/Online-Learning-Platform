@@ -347,7 +347,16 @@ def course_email(request, course_name):
             return render(request , 'course_email.html',{'form': form})   
         else:
             return redirect('dashboard', permanent = True)
-             
+
+# def course_stats(request, course_name):
+#     enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
+#     if enrollment.isTeacher or enrollment.isAssistant:
+#         course = course=mod.Courses.objects.get(course_name = course_name)
+#         for assignment in mod.Assignments.objects.filter(course = course):
+
+#         return render(request, 'course_sats.html')
+#     else:
+#         return redirect('dashboard',permanent=True)          
 
 def announcements(request):
     return render(request,'announcements.html')
