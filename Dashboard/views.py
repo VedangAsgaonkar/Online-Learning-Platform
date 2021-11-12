@@ -69,7 +69,6 @@ def assignment_submission(request, course_name ,name):
         print(form.is_valid())
         print(form.cleaned_data.get('name'))
         if form.is_valid():
-
             assignment = mod.Assignments.objects.get(course = course_name, name=name)
             # enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
             for file in request.FILES.getlist('files'):
@@ -82,7 +81,10 @@ def assignment_submission(request, course_name ,name):
             message = "Successfully submitted assignment " + name + " in course " + course_name
             t3 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, None ))  
             t3.start()
-
+            enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = mod.Courses.objects.get(course_name = course_name))
+            assigncomplete = mod.AssignmentCompleted.objects.get(enrollment = enrollment , assignment =  assignment)
+            assigncomplete.isCompleted = True
+            assigncomplete.save()
         return redirect('assignments', course_name=course_name ,permanent=True)
     else:
         enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
@@ -199,7 +201,6 @@ def assignment_creation(request, course_name):
                 mail_e = profile_e.email_id
                 if mail_e:
                     id_set.add(mail_e)
-
             id_list = list(id_set)
             print(id_list)
             subject = "New assignment created : " + form.cleaned_data.get('assignment_name') + " in course : " + course_name
@@ -207,11 +208,16 @@ def assignment_creation(request, course_name):
             html_message = "Instructor " + str(request.user) + " has added a new assignment " + form.cleaned_data.get('assignment_name') + " in course " + course_name + ". Description :<br>"+markdown.markdown(form.cleaned_data.get('description'))
             t2 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, html_message ))  
             t2.start() 
-            
+            e_iter = mod.Enrollment.objects.filter(course = course_name)
+            for e in e_iter :
+                x = mod.AssignmentCompleted(enrollment = e, assignment = assignment)
+                x.save()
+                print(x.isCompleted)
             return redirect('assignments', course_name = course_name,permanent=True)
     else:
         form = forms.AssignmentCreationForm()
     return render(request, 'assignment_creation.html',{'form':form})
+	
     
 def course_creation(request):
     if request.method == 'POST':
