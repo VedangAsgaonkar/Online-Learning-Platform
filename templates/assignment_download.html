@@ -3,32 +3,42 @@
 
 {% block content1 %}
 <div style="margin-left: 2cm;">
+
+<div style="margin-top: 1cm;">
     {{asgn|safe}}
 </div>
 
 
 <hr>
-<div style="margin-left: 2cm;">
     <h3>Submissions</h3>
 <ul>
     {% for sub in subs %}
     <li>{{sub}}</li>
     {% endfor %}
-</ul>
    
 
-</div>
 
-<div style="margin-left: 2cm; margin-top: 4cm;">
+<div style="margin-top: 1cm;">
 <h2>Download all Submissions</h2>
 <form method="post">
     {% csrf_token %}
     <input type="submit" value="Download">
 </form>
 <hr>
-<a style="font-size: 30;" href = "{% url 'feedback' course_name name %}">Give feedback</a>
+<a style="font-size: 2em;" href = "{% url 'feedback' course_name name %}">Give feedback</a>
 </div>
 
+<hr>
+
+{% if isgraded %}
+<div style="margin-top: 2cm;">
+    <h3>Statistics</h3>
+    <span style="font-size: 1.5em;">mean = {{mean}} std = {{std}} <br>
+    </span>
+    {{plot|safe}}
+</div>
+{% endif %}
+</div>
 {% endblock %}
 
 {% block content2 %}

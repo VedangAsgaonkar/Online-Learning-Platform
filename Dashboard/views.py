@@ -8,7 +8,6 @@ import requests
 from requests.exceptions import HTTPError
 from django.contrib.auth import models, update_session_auth_hash
 from django.contrib.auth.models import User
-# import json
 import datetime
 import threading
 import markdown
@@ -19,7 +18,9 @@ from django.core.mail import send_mail
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
-
+import matplotlib.pyplot as plt
+import numpy as np
+from io import StringIO
 
 EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
 email_from = EMAIL_HOST_USER
@@ -97,6 +98,16 @@ def assignment_submission(request, course_name ,name):
                 # change form above to editable assignment submission
             return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet"} )
 
+def create_barchart(x_data):
+    imgdata = StringIO()
+    imgdata.truncate(0)
+    imgdata.seek(0)
+    plt.hist(x_data)
+    plt.savefig(imgdata, format='svg')
+    imgdata.seek(0)
+    data = imgdata.getvalue()
+    plt.clf()
+    return data 
 
 def assignment_download(request,course_name,name):
     fl_path = 'files/'+course_name+'/'+name
@@ -113,9 +124,28 @@ def assignment_download(request,course_name,name):
             subs = get_immediate_subdirectories(fl_path)
         except:
             subs = []
-        
-        asgn_desc = mod.Assignments.objects.get(course = course_name,name=name).description
-        return render(request, 'assignment_download.html', {'asgn' : asgn_desc, 'subs':subs , 'course_name': course_name , 'name':name })
+        assignment = mod.Assignments.objects.get(course = course_name,name=name)
+        asgn_desc = assignment.description
+        profile_set = set()
+        grades = []
+        for sub in mod.AssignmentFiles.objects.filter(assignment = assignment):
+            if sub.profile not in profile_set:
+                profile_set.add(sub.profile)
+                if sub.grade != 'Not graded yet':
+                    grades.append(float(sub.grade))
+        print(grades)
+        if len(grades) > 0 :
+            is_graded = True
+            grades = np.array(grades)
+            mean = np.mean(grades)
+            std = np.std(grades)
+            plot = create_barchart(grades)
+        else:
+            is_graded = False
+            mean = "Not graded"
+            std = "Not graded"
+            plot = "Not graded"
+        return render(request, 'assignment_download.html', {'asgn' : asgn_desc, 'subs':subs , 'course_name': course_name , 'name':name, 'mean' : mean, 'std':std, 'plot' : plot, 'isgraded' : is_graded })
 
 
 def assignment_feedback(request,course_name,name):
