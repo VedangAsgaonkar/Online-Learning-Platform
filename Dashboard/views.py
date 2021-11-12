@@ -25,6 +25,10 @@ from io import StringIO
 EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
 email_from = EMAIL_HOST_USER
 
+def get_immediate_subdirectories(a_dir):
+    return [name for name in os.listdir(a_dir)
+            if os.path.isdir(os.path.join(a_dir, name))]
+
 # Create your views here.
 
 def index(request):
@@ -356,15 +360,42 @@ def course_email(request, course_name):
         else:
             return redirect('dashboard', permanent = True)
 
-# def course_stats(request, course_name):
-#     enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
-#     if enrollment.isTeacher or enrollment.isAssistant:
-#         course = course=mod.Courses.objects.get(course_name = course_name)
-#         for assignment in mod.Assignments.objects.filter(course = course):
+def create_boxchart(data, ticks):
+    imgdata = StringIO()
+    imgdata.truncate(0)
+    imgdata.seek(0)
+    plt.boxplot(data)
+    plt.xticks([i for i in range(1,len(ticks)+1)], ticks)
+    plt.savefig(imgdata, format='svg')
+    imgdata.seek(0)
+    data = imgdata.getvalue()
+    plt.clf()
+    return data 
 
-#         return render(request, 'course_sats.html')
-#     else:
-#         return redirect('dashboard',permanent=True)          
+def course_stats(request, course_name):
+    enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
+    if enrollment.isTeacher or enrollment.isAssistant:
+        course = course=mod.Courses.objects.get(course_name = course_name)
+        assignment_stats_dict = {}
+        assignment_names = []
+        assignment_grades = []
+        for assignment in mod.Assignments.objects.filter(course = course):
+            grades = []
+            profile_set = set()
+            for sub in mod.AssignmentFiles.objects.filter(assignment = assignment):
+                if sub.profile not in profile_set:
+                    profile_set.add(sub.profile)
+                    if sub.grade != 'Not graded yet':
+                        grades.append(float(sub.grade))
+            print(grades)
+            assignment_names.append(assignment.name)
+            assignment_grades.append(grades)
+            assignment_stats_dict[assignment.name] = "Mean : " + str(np.mean(grades)) + " Std : " + str(np.std(grades))
+            chart = create_boxchart(assignment_grades, assignment_names)
+        print(assignment_stats_dict)
+        return render(request, 'course_stats.html', {'course_name' : course_name, 'assignment_dict' : assignment_stats_dict, 'chart':chart})
+    else:
+        return redirect('dashboard',permanent=True)          
 
 def announcements(request):
     return render(request,'announcements.html')
@@ -420,9 +451,7 @@ def add_course(request, sample_input):
     return render(request, 'courses.html', data)
 
 
-def get_immediate_subdirectories(a_dir):
-    return [name for name in os.listdir(a_dir)
-            if os.path.isdir(os.path.join(a_dir, name))]
+
 
 def create_profile():
     new_profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)
