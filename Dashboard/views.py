@@ -33,8 +33,6 @@ def get_immediate_subdirectories(a_dir):
 
 def index(request):
     courses_dict = {}
-    if mod.Profile.objects.count() == 0:
-        return redirect('Signup/signup', permanent=True)
     try:
         if mod.Profile.objects.filter(user = request.user):
             profile = mod.Profile.objects.get(user = request.user)
