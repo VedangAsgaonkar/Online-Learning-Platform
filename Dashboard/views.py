@@ -382,6 +382,8 @@ def course_stats(request, course_name):
         assignment_stats_dict = {}
         assignment_names = []
         assignment_grades = []
+        chart = ""
+        
         for assignment in mod.Assignments.objects.filter(course = course):
             grades = []
             profile_set = set()
@@ -395,6 +397,7 @@ def course_stats(request, course_name):
             assignment_grades.append(grades)
             assignment_stats_dict[assignment.name] = "Mean : " + str(np.mean(grades)) + " Std : " + str(np.std(grades))
             chart = create_boxchart(assignment_grades, assignment_names)
+            print(chart,'chart')
         print(assignment_stats_dict)
         return render(request, 'course_stats.html', {'course_name' : course_name, 'assignment_dict' : assignment_stats_dict, 'chart':chart})
     else:
