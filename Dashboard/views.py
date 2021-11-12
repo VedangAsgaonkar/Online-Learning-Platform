@@ -10,6 +10,7 @@ from django.contrib.auth import models, update_session_auth_hash
 from django.contrib.auth.models import User
 # import json
 import datetime
+import threading
 import markdown
 from . import models as mod
 from . import forms 
@@ -247,6 +248,12 @@ def course_access(request):
         form = forms.CourseEnrollForm()
         return render(request , 'course_access.html',{'form': form})
 
+def send_email( subject, message, email_from, recipient_list ):
+    try:
+        send_mail( subject, message, email_from, recipient_list ) 
+    except :
+        print('Email failed')
+
 def course_email(request, course_name):
     enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
     course = mod.Courses.objects.get(course_name = course_name)
@@ -265,7 +272,8 @@ def course_email(request, course_name):
                 EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
                 email_from = EMAIL_HOST_USER
                 recipient_list = email_list
-                send_mail( subject, message, email_from, recipient_list )           
+                t1 = threading.Thread(target=send_email, args=(subject, message, email_from, recipient_list, ))  
+                t1.start()         
         return redirect('dashboard', permanent = True)
     else:
         if enrollment.isTeacher or (enrollment.isAssistant and course.assistant_adding_privilege) :
