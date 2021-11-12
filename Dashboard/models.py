@@ -56,3 +56,14 @@ class AssignmentFiles(models.Model):
     feedback = models.CharField(max_length = 100, default="No feedback yet", null=True, blank = True)
     grade = models.CharField(max_length = 100,default="Not graded yet", null=True, blank = True)
 
+class AssignmentCompleted(models.Model):
+	enrollment = models.ForeignKey(Enrollment, on_delete=CASCADE)	
+	assignment = models.ForeignKey(Assignments, on_delete=CASCADE)
+	isCompleted = models.BooleanField(default=False)
+
+
+
+
+
+
+
