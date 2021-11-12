@@ -33,16 +33,19 @@ def get_immediate_subdirectories(a_dir):
 
 def index(request):
     courses_dict = {}
-    if mod.Profile.objects.filter(user = request.user):
-        profile = mod.Profile.objects.get(user = request.user)
-    else:
-        profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)
-        profile.save()
-    for course in profile.courses.all():
-        print(course.course_name)
-        courses_dict[course.course_name] = course.course_info
-    # print(courses_dict)
+    try:
+        if mod.Profile.objects.filter(user = request.user):
+            profile = mod.Profile.objects.get(user = request.user)
+        else:
+            profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)
+            profile.save()
+        for course in profile.courses.all():
+            print(course.course_name)
+            courses_dict[course.course_name] = course.course_info
+    except Exception as e:
+        print(e)
     return render(request,'dashboard.html', {'data' : courses_dict})
+    # print(courses_dict)
 
 def courses(request, input_course_name = "DEFAULT"):
     if(mod.Courses.objects.filter(course_name = input_course_name)):
@@ -405,9 +408,12 @@ def grades(request):
 
 def profile(request):
     courses_list=[]
-    profile = mod.Profile.objects.get(user = request.user)
-    for course in profile.courses.all():
-        courses_list.append(course.course_name)
+    try:
+        profile = mod.Profile.objects.get(user = request.user)
+        for course in profile.courses.all():
+            courses_list.append(course.course_name)
+    except Exception as e:
+        print(e)
     return render(request,'profile.html', {'courses_list': courses_list})
 
 def settings(request):
