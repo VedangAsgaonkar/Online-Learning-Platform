@@ -21,6 +21,9 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 
 
+EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
+email_from = EMAIL_HOST_USER
+
 # Create your views here.
 
 def index(request):
@@ -28,7 +31,7 @@ def index(request):
     if mod.Profile.objects.filter(user = request.user):
         profile = mod.Profile.objects.get(user = request.user)
     else:
-        profile = mod.Profile(user = request.user)
+        profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)
         profile.save()
     for course in profile.courses.all():
         print(course.course_name)
@@ -73,6 +76,11 @@ def assignment_submission(request, course_name ,name):
                 file1 = mod.AssignmentFiles(assignment=assignment, file_name = file_name ,file=file, profile = mod.Profile.objects.get(user = request.user))
                 file1.save()
             print("all ok")
+            id_list = [request.user.member.email_id]
+            subject = "Assignment submission for " + name + " in course " + course_name
+            message = "Successfully submitted assignment " + name + " in course " + course_name
+            t3 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, None ))  
+            t3.start()
 
         return redirect('assignments', course_name=course_name ,permanent=True)
     else:
@@ -84,7 +92,7 @@ def assignment_submission(request, course_name ,name):
             asgn_desc = mod.Assignments.objects.get(course = course_name,name=name).description
             form = forms.AssignmentSubmissionForm()
             if mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)):
-                asgn_file = mod.AssignmentFiles.objects.get(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user))
+                asgn_file = mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)).first()
                 return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade})
                 # change form above to editable assignment submission
             return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet"} )
@@ -118,11 +126,19 @@ def assignment_feedback(request,course_name,name):
             assignment_files = mod.AssignmentFiles.objects.filter(assignment = assignment)
             file = request.FILES.getlist('feedback_file')[0]
             ds = pd.read_csv(file)
+            id_set = set()
             for i in ds.index:
-                assignment_profile = assignment_files.get(profile = mod.Profile.objects.get(user = ds['name'][i]))
-                assignment_profile.feedback = ds['feedback'][i]
-                assignment_profile.grade = ds['grade'][i]
-                assignment_profile.save()
+                for assignment_profile in assignment_files.filter(profile = mod.Profile.objects.get(user = ds['name'][i])):
+                    assignment_profile.feedback = ds['feedback'][i]
+                    assignment_profile.grade = ds['grade'][i]
+                    assignment_profile.save()
+                id_set.add( mod.Profile.objects.get(user = ds['name'][i]).email_id )
+               
+            id_list = list(id_set)
+            subject = "Feedback for assignment " + name + " in course " + course_name
+            message = "View Feedback on BlueFire moodle"
+            t4 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, None ))  
+            t4.start()
             return redirect('assignments', course_name = course_name,permanent=True)
     else :
         form = forms.AssignmentFeedbackForm()
@@ -131,12 +147,9 @@ def assignment_feedback(request,course_name,name):
 
 
 def assignment_creation(request, course_name):
-    print('OK))))))00000')
     enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
     course = mod.Courses.objects.get(course_name = course_name)
-    print("OK __________")
     if not (enrollment.isTeacher or (enrollment.isAssistant and course.assistant_creation_privilege)) :
-        print("++++++++++++++++")
         return redirect('assignments', course_name = course_name,permanent=True)
     print("In here")
     if request.method == 'POST':
@@ -150,6 +163,21 @@ def assignment_creation(request, course_name):
             assignment.save()
             print("fine")
 
+            id_set = set()
+            for e in mod.Enrollment.objects.filter(course = course1):
+                profile_e = e.profile
+                mail_e = profile_e.email_id
+                if mail_e:
+                    id_set.add(mail_e)
+
+            id_list = list(id_set)
+            print(id_list)
+            subject = "New assignment created : " + form.cleaned_data.get('assignment_name') + " in course : " + course_name
+            message = "Instructor " + str(request.user) + " has added a new assignment " + form.cleaned_data.get('assignment_name') + " in course " + course_name + ". Description :\n"
+            html_message = "Instructor " + str(request.user) + " has added a new assignment " + form.cleaned_data.get('assignment_name') + " in course " + course_name + ". Description :<br>"+markdown.markdown(form.cleaned_data.get('description'))
+            t2 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, html_message ))  
+            t2.start() 
+            
             return redirect('assignments', course_name = course_name,permanent=True)
     else:
         form = forms.AssignmentCreationForm()
@@ -179,7 +207,7 @@ def course_creation(request):
                 print("Already Made")
                 profile1 = mod.Profile.objects.get(user = request.user)
             else:
-                profile1 = mod.Profile(user = request.user)
+                profile1 = mod.Profile(user = request.user, email_id=request.user.member.email_id)
                 print("CREATED")
                 profile1.save()
                 profile1 = mod.Profileobjects.get(user = request.user)
@@ -248,9 +276,13 @@ def course_access(request):
         form = forms.CourseEnrollForm()
         return render(request , 'course_access.html',{'form': form})
 
-def send_email( subject, message, email_from, recipient_list ):
+def send_email( subject, message, email_from, recipient_list, html_message ):
     try:
-        send_mail( subject, message, email_from, recipient_list ) 
+        if html_message:
+            send_mail( subject, message, email_from, recipient_list, html_message=html_message ) 
+        else :
+            send_mail( subject, message, email_from, recipient_list ) 
+        print('success', recipient_list)
     except :
         print('Email failed')
 
@@ -269,10 +301,8 @@ def course_email(request, course_name):
                 if form.cleaned_data.get('master_email'):
                     message = 'Hi. This is an email giving you access to course '+course_name+'. Your access code is : ' + course.access_code + '. Your master code is : ' + course.master_code
                 subject = 'Course access code for course '+course_name
-                EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
-                email_from = EMAIL_HOST_USER
                 recipient_list = email_list
-                t1 = threading.Thread(target=send_email, args=(subject, message, email_from, recipient_list, ))  
+                t1 = threading.Thread(target=send_email, args=(subject, message, email_from, recipient_list, None,  ))  
                 t1.start()         
         return redirect('dashboard', permanent = True)
     else:
@@ -342,7 +372,7 @@ def get_immediate_subdirectories(a_dir):
             if os.path.isdir(os.path.join(a_dir, name))]
 
 def create_profile():
-    new_profile = mod.Profile(user = request.user)
+    new_profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)
     new_profile.save()
     ##To be called only after signup and nowhere else
 

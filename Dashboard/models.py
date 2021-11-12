@@ -23,6 +23,7 @@ class Courses(models.Model):
 
 class Profile(models.Model):
     user = models.CharField(max_length=100 , primary_key = True)
+    email_id = models.EmailField(max_length=100, null=True)
     courses =  models.ManyToManyField(Courses , through = 'Enrollment')
     class Meta:
         ordering = ('user', )
