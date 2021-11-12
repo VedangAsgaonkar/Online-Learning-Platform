@@ -94,9 +94,11 @@ def assignment_submission(request, course_name ,name):
         else:
             asgn_desc = mod.Assignments.objects.get(course = course_name,name=name).description
             form = forms.AssignmentSubmissionForm()
+            assignment = mod.Assignments.objects.get(course = course_name, name=name)
+            assigncomplete = mod.AssignmentCompleted.objects.get(enrollment = enrollment , assignment =  assignment)
             if mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)):
                 asgn_file = mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)).first()
-                return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade})
+                return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade,'isCompleted' : assigncomplete.isCompleted})
                 # change form above to editable assignment submission
             return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet"} )
 
@@ -299,11 +301,17 @@ def course_access(request):
                     if(course.master_code == form.cleaned_data.get('master_code')):
                         enroll.isTeacher = True
                         print('enrolling as teacher')
+                        enroll.save()
                     elif(course.assistant_code == form.cleaned_data.get('assistant_code')):
                         enroll.isAssistant = True
                         print('enrolling as assistant')
                         print(course.assistant_grading_privilege)
-                    enroll.save()
+                        enroll.save()
+                    else:
+                        enroll.save()
+                        for assignment in mod.Assignments.objects.filter(course = course):
+                            x = mod.AssignmentCompleted(assignment = assignment , enrollment = enroll)
+                            x.save()
                 print('Added to course successfully')
             else:
                 print('No course exists with access code: ', form.cleaned_data.get('access_code'))
