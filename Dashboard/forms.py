@@ -4,6 +4,7 @@ from django.db.models.fields import NullBooleanField
 class AssignmentCreationForm(forms.Form):
     assignment_name = forms.CharField(label="Assignment Name", max_length=100)
     description = forms.CharField(widget=forms.Textarea)
+    deadline = forms.DateTimeField(label = "Set Deadline")
 
 class AssignmentSubmissionForm(forms.Form):
     files = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple' : True}))

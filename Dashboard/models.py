@@ -4,7 +4,7 @@ from django.db.models import constraints
 from django.db.models.deletion import CASCADE
 from django.db.models.expressions import Case
 from django.utils.translation import deactivate
-
+import datetime
 class Courses(models.Model):
     course_name = models.CharField(max_length=100, primary_key=True)
     course_info = models.CharField(max_length=1000, default="Course Info")
@@ -44,6 +44,7 @@ class Assignments(models.Model):
     course = models.ForeignKey(Courses , on_delete = models.CASCADE, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     description = models.CharField(max_length=1200, blank=True, null=True)
+    deadline = models.DateTimeField(blank = True, null = True)
 
 def getFileName(instance, filename):
     return 'files/'+instance.file_name+'/'+filename
