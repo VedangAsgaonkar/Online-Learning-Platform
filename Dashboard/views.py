@@ -33,6 +33,7 @@ def get_immediate_subdirectories(a_dir):
 
 def index(request):
     courses_dict = {}
+    asgn_remaining_dict = []
     try:
         if mod.Profile.objects.filter(user = request.user):
             profile = mod.Profile.objects.get(user = request.user)
@@ -40,12 +41,28 @@ def index(request):
             profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)
             profile.save()
         for course in profile.courses.all():
-            print(course.course_name)
             courses_dict[course.course_name] = course.course_info
+            enrollment = mod.Enrollment.objects.get(profile = profile, course = course)
+            for assignment in mod.Assignments.objects.filter(course = course) :
+                #print(assignment.name , "index")
+                x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
+                if not x.isCompleted:
+                   asgn_remaining_dict.append(course.course_name + "-" + assignment.name)
+                   #print("I'm inside the loop")
+        #print(asgn_remaining_dict , " index")
     except Exception as e:
         print(e)
     return render(request,'dashboard.html', {'data' : courses_dict})
-    # print(courses_dict)
+
+    
+
+
+
+
+
+
+
+
 
 def courses(request, input_course_name = "DEFAULT"):
     if(mod.Courses.objects.filter(course_name = input_course_name)):
@@ -174,13 +191,22 @@ def assignment_feedback(request,course_name,name):
                     assignment_profile.grade = ds['grade'][i]
                     assignment_profile.save()
                 id_set.add( mod.Profile.objects.get(user = ds['name'][i]).email_id )
-               
+            allCorrected = True
+            for enrollment in mod.Enrollment.objects.filter(course = mod.Courses.objects.get(course = course_name), isTeacher = False) :
+                allCorrected = allCorrected and mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment).isCompleted
+                if not allCorrected :
+                   break
+            if allCorrected :
+                for enrollment in mod.Enrollment.objects.filter(course = mod.Courses.objects.get(course = course_name), isTeacher = True) : 
+                    x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
+                    x.isCompleted = True
+                    x.save()
             id_list = list(id_set)
             subject = "Feedback for assignment " + name + " in course " + course_name
             message = "View Feedback on BlueFire moodle"
             t4 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, None ))  
             t4.start()
-            return redirect('assignments', course_name = course_name,permanent=True)
+            return redirect('assignments', course_name = course_name, permanent = True)
     else :
         form = forms.AssignmentFeedbackForm()
         return render(request,'feedback.html' , {'form': form})
@@ -513,3 +539,13 @@ def edit_profile(request):
 #        form.fields['institute_name'].initial = request.user.member.institute_name
         context = {'form': form}
         return render(request , 'settings.html', context) 
+
+
+
+
+
+
+
+
+
+
