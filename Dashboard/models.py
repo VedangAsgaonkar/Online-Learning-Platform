@@ -35,6 +35,7 @@ class Enrollment(models.Model):
     profile = models.ForeignKey(Profile , on_delete = models.CASCADE)
     course = models.ForeignKey(Courses , on_delete = models.CASCADE)
     grade = models.CharField(max_length = 100, blank = True , null = True)
+    marks = models.FloatField(default=0, null=True)
     isTeacher = models.BooleanField(default = False)
     isAssistant = models.BooleanField(default=False)
     class Meta:
@@ -44,6 +45,7 @@ class Assignments(models.Model):
     course = models.ForeignKey(Courses , on_delete = models.CASCADE, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     description = models.CharField(max_length=1200, blank=True, null=True)
+    weightage = models.FloatField(default = 0)
 
 def getFileName(instance, filename):
     return 'files/'+instance.file_name+'/'+filename
@@ -55,6 +57,7 @@ class AssignmentFiles(models.Model):
     profile = models.ForeignKey(Profile , null = True, on_delete=CASCADE)
     feedback = models.CharField(max_length = 100, default="No feedback yet", null=True, blank = True)
     grade = models.CharField(max_length = 100,default="Not graded yet", null=True, blank = True)
+    marks = models.FloatField(default =0)
 
 class AssignmentCompleted(models.Model):
 	enrollment = models.ForeignKey(Enrollment, on_delete=CASCADE)	

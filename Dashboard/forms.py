@@ -3,6 +3,7 @@ from django.db.models.fields import NullBooleanField
 
 class AssignmentCreationForm(forms.Form):
     assignment_name = forms.CharField(label="Assignment Name", max_length=100)
+    weightage = forms.FloatField()
     description = forms.CharField(widget=forms.Textarea)
 
 class AssignmentSubmissionForm(forms.Form):

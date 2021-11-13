@@ -172,6 +172,7 @@ def assignment_feedback(request,course_name,name):
                 for assignment_profile in assignment_files.filter(profile = mod.Profile.objects.get(user = ds['name'][i])):
                     assignment_profile.feedback = ds['feedback'][i]
                     assignment_profile.grade = ds['grade'][i]
+                    assignment_profile.marks = ds['marks'][i]
                     assignment_profile.save()
                 id_set.add( mod.Profile.objects.get(user = ds['name'][i]).email_id )
                
@@ -199,6 +200,7 @@ def assignment_creation(request, course_name):
             course1 = mod.Courses.objects.get(course_name = course_name)
             assignment = mod.Assignments(course=course1)
             assignment.name = form.cleaned_data.get('assignment_name')
+            assignment.weightage = form.cleaned_data.get('weightage')
             assignment.description = markdown.markdown(form.cleaned_data.get('description'))
             print(markdown.markdown(form.cleaned_data.get('description')))
             assignment.save()
@@ -377,37 +379,51 @@ def create_boxchart(data, ticks):
 
 def course_stats(request, course_name):
     enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
+    course = course=mod.Courses.objects.get(course_name = course_name)
+    assignment_stats_dict = {}
+    assignment_names = []
+    assignment_grades = []
+    chart = ""
+    
+    for assignment in mod.Assignments.objects.filter(course = course):
+        grades = []
+        profile_set = set()
+        for sub in mod.AssignmentFiles.objects.filter(assignment = assignment):
+            if sub.profile not in profile_set:
+                profile_set.add(sub.profile)
+                if sub.grade != 'Not graded yet':
+                    grades.append(float(sub.grade))
+        # print(grades)
+        assignment_names.append(assignment.name)
+        assignment_grades.append(grades)
+        assignment_stats_dict[assignment.name] = "Mean : " + str(np.mean(grades)) + " Std : " + str(np.std(grades))
+        chart = create_boxchart(assignment_grades, assignment_names)
+        # print(chart,'chart')
+        # print(assignment_stats_dict)
     if enrollment.isTeacher or enrollment.isAssistant:
-        course = course=mod.Courses.objects.get(course_name = course_name)
-        assignment_stats_dict = {}
-        assignment_names = []
-        assignment_grades = []
-        chart = ""
-        
-        for assignment in mod.Assignments.objects.filter(course = course):
-            grades = []
-            profile_set = set()
-            for sub in mod.AssignmentFiles.objects.filter(assignment = assignment):
-                if sub.profile not in profile_set:
-                    profile_set.add(sub.profile)
-                    if sub.grade != 'Not graded yet':
-                        grades.append(float(sub.grade))
-            print(grades)
-            assignment_names.append(assignment.name)
-            assignment_grades.append(grades)
-            assignment_stats_dict[assignment.name] = "Mean : " + str(np.mean(grades)) + " Std : " + str(np.std(grades))
-            chart = create_boxchart(assignment_grades, assignment_names)
-            print(chart,'chart')
-        print(assignment_stats_dict)
         return render(request, 'course_stats.html', {'course_name' : course_name, 'assignment_dict' : assignment_stats_dict, 'chart':chart})
     else:
-        return redirect('dashboard',permanent=True)          
+         return render(request, 'course_stats.html', {'course_name' : course_name, 'assignment_dict' : assignment_stats_dict})
+
 
 def announcements(request):
     return render(request,'announcements.html')
 
-def grades(request):
-    return render(request,'grades.html')
+def grades(request, course_name):
+    enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
+    course = course=mod.Courses.objects.get(course_name = course_name)
+    grades = {}
+    course_total=0
+    for assignment in mod.Assignments.objects.filter(course = course):
+        profile_set = set()
+        for sub in mod.AssignmentFiles.objects.filter(assignment = assignment):
+            if sub.profile not in profile_set:
+                profile_set.add(sub.profile)
+                if sub.grade != 'Not graded yet':
+                    grades[assignment.name] = sub.marks
+                    course_total+=sub.marks*assignment.weightage
+    print("joiefje")
+    return render(request,'grades.html',{'grades':grades, 'course_name':course_name, 'course_total':course_total})
 
 def profile(request):
     courses_list=[]
