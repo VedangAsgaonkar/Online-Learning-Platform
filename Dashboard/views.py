@@ -54,15 +54,6 @@ def index(request):
         print(e)
     return render(request,'dashboard.html', {'data' : courses_dict})
 
-    
-
-
-
-
-
-
-
-
 
 def courses(request, input_course_name = "DEFAULT"):
     if(mod.Courses.objects.filter(course_name = input_course_name)):
@@ -124,7 +115,7 @@ def assignment_submission(request, course_name ,name):
                 asgn_file = mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)).first()
                 return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade,'isCompleted' : assigncomplete.isCompleted})
                 # change form above to editable assignment submission
-            return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet"} )
+            return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet", 'asgn_deadline' : assignment.deadline} )
 
 def create_barchart(x_data):
     imgdata = StringIO()
@@ -227,6 +218,7 @@ def assignment_creation(request, course_name):
             assignment = mod.Assignments(course=course1)
             assignment.name = form.cleaned_data.get('assignment_name')
             assignment.weightage = form.cleaned_data.get('weightage')
+            assignment.deadline = form.cleaned_data.get('deadline')
             assignment.description = markdown.markdown(form.cleaned_data.get('description'))
             print(markdown.markdown(form.cleaned_data.get('description')))
             assignment.save()
