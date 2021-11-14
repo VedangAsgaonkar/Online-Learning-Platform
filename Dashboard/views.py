@@ -275,7 +275,7 @@ def course_creation(request):
                 profile1 = mod.Profile(user = request.user, email_id=request.user.member.email_id)
                 print("CREATED")
                 profile1.save()
-                profile1 = mod.Profileobjects.get(user = request.user)
+                profile1 = mod.Profile.objects.get(user = request.user)
 
             profile1.courses.add(course_added)
             profile1.save()
