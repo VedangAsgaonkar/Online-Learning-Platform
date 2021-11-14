@@ -184,12 +184,12 @@ def assignment_feedback(request,course_name,name):
                     assignment_profile.save()
                 id_set.add( mod.Profile.objects.get(user = ds['name'][i]).email_id )
             allCorrected = True
-            for enrollment in mod.Enrollment.objects.filter(course = mod.Courses.objects.get(course = course_name), isTeacher = False) :
+            for enrollment in mod.Enrollment.objects.filter(course = mod.Courses.objects.get(course_name = course_name), isTeacher = False) :
                 allCorrected = allCorrected and mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment).isCompleted
                 if not allCorrected :
                    break
             if allCorrected :
-                for enrollment in mod.Enrollment.objects.filter(course = mod.Courses.objects.get(course = course_name), isTeacher = True) : 
+                for enrollment in mod.Enrollment.objects.filter(course = mod.Courses.objects.get(course_name = course_name), isTeacher = True) : 
                     x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
                     x.isCompleted = True
                     x.save()
