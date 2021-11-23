@@ -36,26 +36,36 @@ def index(request):
     courses_dict = {}
     asgn_remaining_dict = []
     asgn_remaining_dict1 = {}
-    if mod.Profile.objects.filter(user = request.user):
-        profile = mod.Profile.objects.get(user = request.user)
-    else:
-        profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)
-        profile.save()
-    for course in profile.courses.all():
-        courses_dict[course.course_name] = course.course_info
-        enrollment = mod.Enrollment.objects.get(profile = profile, course = course)
-        for assignment in mod.Assignments.objects.filter(course = course) :
-            #print(assignment.name , "index")
-            try:
-                x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
-                if not x.isCompleted:
-                    asgn_remaining_dict.append(course.course_name + "-" + assignment.name)
-                    if assignment.deadline != None:
-                        asgn_remaining_dict1[course.course_name + "-" + assignment.name] = assignment.deadline
-            except Exception as e:
-                print(e)
-    return render(request,'dashboard.html', {'data' : courses_dict , 'to_do': asgn_remaining_dict , 'to_do_dead': asgn_remaining_dict1})
-
+    try:
+        if mod.Profile.objects.filter(user = request.user):
+            profile = mod.Profile.objects.get(user = request.user)
+        else:
+            profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)
+            profile.save()
+        for course in profile.courses.all():
+        
+            enrollment = mod.Enrollment.objects.get(profile = profile, course = course)
+            total_completed = 0
+            total_course = 0
+            for assignment in mod.Assignments.objects.filter(course = course) :
+                total_course+= 1
+                try:
+                    x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
+                    if not x.isCompleted:
+                        asgn_remaining_dict.append(course.course_name + "-" + assignment.name)
+                        if assignment.deadline != None:
+                            asgn_remaining_dict1[course.course_name + "-" + assignment.name] = assignment.deadline
+                    else:
+                        total_completed+=1
+                except Exception as e:
+                    print(e)
+            if total_course==0:
+                courses_dict[course.course_name] = [course.course_info , 100]
+            else:
+                courses_dict[course.course_name] = [course.course_info , total_completed/total_course*100]
+        return render(request,'dashboard.html', {'data' : courses_dict , 'to_do': asgn_remaining_dict , 'to_do_dead': asgn_remaining_dict1})
+    except:
+        return redirect('signup')
 
 def courses(request, input_course_name = "DEFAULT"):
     if(mod.Courses.objects.filter(course_name = input_course_name)):
@@ -222,6 +232,9 @@ def assignment_creation(request, course_name):
             assignment.weightage = form.cleaned_data.get('weightage')
             assignment.deadline = form.cleaned_data.get('deadline')
             print("fine")
+            assignment.description = markdown.markdown(form.cleaned_data.get('description'))
+            print(markdown.markdown(form.cleaned_data.get('description')))
+            assignment.save()
 
             id_set = set()
             for e in mod.Enrollment.objects.filter(course = course1):
