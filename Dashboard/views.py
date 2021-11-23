@@ -52,9 +52,13 @@ def index(request):
                 try:
                     x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
                     if not x.isCompleted and assignment.deadline != None:
-                        # asgn_remaining_dict.append(course.course_name + "-" + assignment.name)
-                        asgn_remaining_dict1[course.course_name] = [assignment.name ,assignment.deadline]
-                    else:
+                        if enrollment.isTeacher:
+                            asgn_remaining_dict1[course.course_name] = [assignment.name ,assignment.deadline, True ]
+                        elif enrollment.isAssistant and course.assistant_grading_privilege:
+                            asgn_remaining_dict1[course.course_name] = [assignment.name ,assignment.deadline, True ]
+                        elif not enrollment.isAssistant:
+                            asgn_remaining_dict1[course.course_name] = [assignment.name ,assignment.deadline, False ]
+                    else :
                         total_completed+=1
                 except Exception as e:
                     print(e)
