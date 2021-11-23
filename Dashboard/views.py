@@ -51,10 +51,9 @@ def index(request):
                 total_course+= 1
                 try:
                     x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
-                    if not x.isCompleted:
-                        asgn_remaining_dict.append(course.course_name + "-" + assignment.name)
-                        if assignment.deadline != None:
-                            asgn_remaining_dict1[course.course_name + "-" + assignment.name] = assignment.deadline
+                    if not x.isCompleted and assignment.deadline != None:
+                        # asgn_remaining_dict.append(course.course_name + "-" + assignment.name)
+                        asgn_remaining_dict1[course.course_name] = [assignment.name ,assignment.deadline]
                     else:
                         total_completed+=1
                 except Exception as e:
