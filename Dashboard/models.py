@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import constraints
+from django.db.models.base import Model
 from django.db.models.deletion import CASCADE
 from django.db.models.expressions import Case
 from django.utils.translation import deactivate
@@ -64,6 +65,29 @@ class AssignmentCompleted(models.Model):
 	enrollment = models.ForeignKey(Enrollment, on_delete=CASCADE)	
 	assignment = models.ForeignKey(Assignments, on_delete=CASCADE)
 	isCompleted = models.BooleanField(default=False)
+
+class Message(models.Model):
+    course = models.ForeignKey(Courses, on_delete=CASCADE)
+    content = models.CharField(max_length=1000, default="", null=True, blank = True)
+    author = models.ForeignKey(Profile, on_delete=CASCADE)
+    time_of_last_edit = models.TimeField(auto_now=True)
+    id = models.BigAutoField(primary_key=True)
+
+class Replies(models.Model):
+    course = models.ForeignKey(Courses, on_delete=CASCADE)
+    parent_message = models.ForeignKey(Message, on_delete=CASCADE)
+    content = models.CharField(max_length=1000, default="", null=True, blank = True)
+    author = models.ForeignKey(Profile, on_delete=CASCADE)
+    time_of_last_edit = models.TimeField(auto_now=True)
+    
+
+
+# 2 models- Message, Replies
+
+#Message- Content, time/counter, author, (Editable?), Course-Foreign key
+
+#Replies- Content, time, author, Message as foreign key
+
 
 
 

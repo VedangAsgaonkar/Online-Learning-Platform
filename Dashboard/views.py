@@ -435,8 +435,62 @@ def course_stats(request, course_name):
          return render(request, 'course_stats.html', {'course_name' : course_name, 'assignment_dict' : assignment_stats_dict})
 
 
-def announcements(request):
-    return render(request,'announcements.html')
+def announcements_create(request, course_name):
+    enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
+    course = mod.Courses.objects.get(course_name = course_name)
+    # if not (enrollment.isTeacher or (enrollment.isAssistant and course.assistant_creation_privilege)) :
+        # this means that student is present, or TA with less privileges
+    #     return redirect('assignments', course_name = course_name,permanent=True)
+    # print("In here")
+    if request.method == 'POST':
+        form = forms.MessageCreationForm(request.POST)
+        if form.is_valid():
+            course1 = mod.Courses.objects.get(course_name = course_name)
+            message = mod.Message(course=course1)
+            message.content = markdown.markdown(form.cleaned_data.get('content'))
+            message.time_of_last_edit = datetime.datetime.now()
+            message.author = mod.Profile.objects.get(user = request.user)
+            message.save()
+            print("fine")
+            return redirect('announcements', course_name = course_name,permanent=True)
+    else:
+        form = forms.MessageCreationForm()
+        return render(request,'announcements_new.html',{'form':form})
+
+
+def announcements(request, course_name):
+    announcement_dict = {}
+    course = mod.Courses.objects.get(course_name = course_name)
+    enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
+    if enrollment.isTeacher or (enrollment.isAssistant):
+        teacher = True
+    else:
+        teacher = False
+    if(mod.Message.objects.filter(course=course)):
+        for parent_post in mod.Message.objects.filter(course = course):
+                current_message = (parent_post.content, parent_post.id)
+                announcement_dict[current_message] = []
+                for reply in mod.Replies.objects.filter(parent_message = parent_post):
+                    announcement_dict[current_message].append(reply.content)
+                    
+    return render(request,'announcements.html', {'data' : announcement_dict, 'course' : course_name, 'teacher':teacher})
+
+def announcements_reply(request, course_name, id):
+    if request.method == 'POST':
+        form = forms.ReplyCreationForm(request.POST)
+        if form.is_valid():
+            message = mod.Message.objects.get(id = id)
+            reply = mod.Replies(parent_message = message)
+            reply.content = markdown.markdown(form.cleaned_data.get('content'))
+            reply.time_of_last_edit = datetime.datetime.now()
+            reply.author = mod.Profile.objects.get(user = request.user)
+            reply.course = message.course
+            reply.save()
+            print("fine")
+            return redirect('announcements', course_name = course_name,permanent=True)
+    else:
+        form = forms.ReplyCreationForm()
+        return render(request,'announcements_new.html',{'form':form})
 
 def grades(request, course_name):
     enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
