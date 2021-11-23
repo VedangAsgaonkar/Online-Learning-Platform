@@ -9,6 +9,7 @@ from requests.exceptions import HTTPError
 from django.contrib.auth import models, update_session_auth_hash
 from django.contrib.auth.models import User
 import datetime
+import pytz
 import threading
 import markdown
 from . import models as mod
@@ -34,25 +35,26 @@ def get_immediate_subdirectories(a_dir):
 def index(request):
     courses_dict = {}
     asgn_remaining_dict = []
-    try:
-        if mod.Profile.objects.filter(user = request.user):
-            profile = mod.Profile.objects.get(user = request.user)
-        else:
-            profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)
-            profile.save()
-        for course in profile.courses.all():
-            courses_dict[course.course_name] = course.course_info
-            enrollment = mod.Enrollment.objects.get(profile = profile, course = course)
-            for assignment in mod.Assignments.objects.filter(course = course) :
-                #print(assignment.name , "index")
+    asgn_remaining_dict1 = {}
+    if mod.Profile.objects.filter(user = request.user):
+        profile = mod.Profile.objects.get(user = request.user)
+    else:
+        profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)
+        profile.save()
+    for course in profile.courses.all():
+        courses_dict[course.course_name] = course.course_info
+        enrollment = mod.Enrollment.objects.get(profile = profile, course = course)
+        for assignment in mod.Assignments.objects.filter(course = course) :
+            #print(assignment.name , "index")
+            try:
                 x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
                 if not x.isCompleted:
-                   asgn_remaining_dict.append(course.course_name + "-" + assignment.name)
-                   #print("I'm inside the loop")
-        #print(asgn_remaining_dict , " index")
-    except Exception as e:
-        print(e)
-    return render(request,'dashboard.html', {'data' : courses_dict})
+                    asgn_remaining_dict.append(course.course_name + "-" + assignment.name)
+                    if assignment.deadline != None:
+                        asgn_remaining_dict1[course.course_name + "-" + assignment.name] = assignment.deadline
+            except Exception as e:
+                print(e)
+    return render(request,'dashboard.html', {'data' : courses_dict , 'to_do': asgn_remaining_dict , 'to_do_dead': asgn_remaining_dict1})
 
 
 def courses(request, input_course_name = "DEFAULT"):
@@ -204,7 +206,6 @@ def assignment_feedback(request,course_name,name):
         return render(request,'feedback.html' , {'form': form})
 
 
-
 def assignment_creation(request, course_name):
     enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
     course = mod.Courses.objects.get(course_name = course_name)
@@ -213,15 +214,13 @@ def assignment_creation(request, course_name):
     print("In here")
     if request.method == 'POST':
         form = forms.AssignmentCreationForm(request.POST)
+
         if form.is_valid():
             course1 = mod.Courses.objects.get(course_name = course_name)
             assignment = mod.Assignments(course=course1)
             assignment.name = form.cleaned_data.get('assignment_name')
             assignment.weightage = form.cleaned_data.get('weightage')
             assignment.deadline = form.cleaned_data.get('deadline')
-            assignment.description = markdown.markdown(form.cleaned_data.get('description'))
-            print(markdown.markdown(form.cleaned_data.get('description')))
-            assignment.save()
             print("fine")
 
             id_set = set()
