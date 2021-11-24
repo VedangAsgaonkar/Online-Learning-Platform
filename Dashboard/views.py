@@ -600,11 +600,19 @@ def chat_screen(request, person):
     else:
         if mod.Conversation.objects.filter(person1 = profile1, person2 = receiver_person):
             conversation =  mod.Conversation.objects.get(person1 = profile1, person2 = receiver_person)
+            if conversation.messages == None:
+                conversation.senders= []
+                conversation.times= []
+                conversation.messages = []
             length = len(conversation.messages)
             for index in range(length):
                 chat_list.append((conversation.messages[index],conversation.senders[index]))
         elif mod.Conversation.objects.filter(person1 = receiver_person, person2 = profile1 ):
             conversation =  mod.Conversation.objects.get(person1 = receiver_person, person2 = profile1)
+            if conversation.messages == None:
+                conversation.senders= []
+                conversation.times= []
+                conversation.messages = []        
             length = len(conversation.messages)
             for index in range(length):
                 chat_list.append((conversation.messages[index],conversation.senders[index]))
