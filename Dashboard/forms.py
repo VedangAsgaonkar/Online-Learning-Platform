@@ -46,4 +46,7 @@ class ReplyCreationForm(forms.Form):
 
 class MessageSearchForm(forms.Form):
     username = forms.CharField(label="Enter Username", max_length=30)
-    
+
+class AddChat(forms.Form):
+    chat_message = forms.CharField(label="Enter your Message", max_length=1000)
+

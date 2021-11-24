@@ -12,11 +12,19 @@
 </form>
 <br>
 <ul>
-{% for person in list %}
-    <li><a href="{% url 'chat_screen' person %}">{{person}}</a></li>
+{% for chat_message in chat_list %}
+    {% if chat_message.1 %}
+    <div style="margin-left: 300px;">
+        <li>{{chat_message.0}} </li>
+    </div>
+    {% else %}
+    <div style="float: left;">
+        <li>{{chat_message.0}} </li>
+    </div>
+    <br>
+    {% endif %}
 {% endfor %}
 </ul>
-
 {% endblock %}
 
 {% block content2 %}

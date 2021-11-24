@@ -4,6 +4,7 @@ import os
 from django.http.response import FileResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.http import HttpRequest, request
+from pandas.core.indexing import convert_to_index_sliceable
 import requests
 from requests.exceptions import HTTPError
 from django.contrib.auth import models, update_session_auth_hash
@@ -521,12 +522,13 @@ def message_list(request):
         form = forms.MessageSearchForm(request.POST)
         if form.is_valid():
             receiver = form.cleaned_data.get('username')
-            if mod.Profile.objects.filter(user = receiver) :
-                print("valid hi tha")
-                profile2 = mod.Profile.objects.get(user = receiver)
-                if not ( mod.Conversation.objects.filter(person1 = profile1, person2 = profile2) or mod.Conversation.objects.filter(person1 = profile2, person2 = profile1) ) :
-                    conversation = mod.Conversation(person1 = profile1, person2 = profile2)
-                    conversation.save()
+            if not request.user==receiver:
+                if mod.Profile.objects.filter(user = receiver) :
+                    print("valid hi tha")
+                    profile2 = mod.Profile.objects.get(user = receiver)
+                    if not ( mod.Conversation.objects.filter(person1 = profile1, person2 = profile2) or mod.Conversation.objects.filter(person1 = profile2, person2 = profile1) ) :
+                        conversation = mod.Conversation(person1 = profile1, person2 = profile2)
+                        conversation.save()
     form = forms.MessageSearchForm()
     convo_list = []
     for convo in mod.Conversation.objects.filter(person1 = profile1):
@@ -534,6 +536,57 @@ def message_list(request):
     for convo in mod.Conversation.objects.filter(person2 = profile1):
         convo_list.append(convo.person1.user)
     return render(request, 'message_list.html', {'form':form, 'list' : convo_list})
+
+
+def chat_screen(request, person):
+    profile1 = mod.Profile.objects.get(user = request.user)
+    receiver_person = mod.Profile.objects.get(user = person )
+    chat_list = []
+    if request.method == 'POST':
+        form = forms.AddChat(request.POST)
+        if form.is_valid():
+            chat_message = form.cleaned_data.get('chat_message')
+            if mod.Conversation.objects.filter(person1 = profile1, person2 = receiver_person):
+                conversation =  mod.Conversation.objects.get(person1 = profile1, person2 = receiver_person)
+                if conversation.messages == None:
+                    conversation.senders= []
+                    conversation.times= []
+                    conversation.messages = []
+                conversation.senders.append(True)
+                conversation.times.append(datetime.datetime.now())
+                conversation.messages.append(chat_message)
+                conversation.save()
+                length = len(conversation.messages)
+                for index in range(length):
+                    chat_list.append((conversation.messages[index],conversation.senders[index]))
+            elif mod.Conversation.objects.filter(person1 = receiver_person, person2 = profile1 ):
+                conversation =  mod.Conversation.objects.get(person1 = receiver_person, person2 = profile1)
+                if conversation.messages == None:
+                    conversation.senders= []
+                    conversation.times= []
+                    conversation.messages = []
+                conversation.senders.append(False)
+                conversation.times.append(datetime.datetime.now())
+                conversation.messages.append(chat_message)
+                conversation.save()
+                length = len(conversation.messages)
+                for index in range(length):
+                    chat_list.append((conversation.messages[index],conversation.senders[index]))
+            else:
+                print(chat_message)
+    else:
+        if mod.Conversation.objects.filter(person1 = profile1, person2 = receiver_person):
+            conversation =  mod.Conversation.objects.get(person1 = profile1, person2 = receiver_person)
+            length = len(conversation.messages)
+            for index in range(length):
+                chat_list.append((conversation.messages[index],conversation.senders[index]))
+        elif mod.Conversation.objects.filter(person1 = receiver_person, person2 = profile1 ):
+            conversation =  mod.Conversation.objects.get(person1 = receiver_person, person2 = profile1)
+            length = len(conversation.messages)
+            for index in range(length):
+                chat_list.append((conversation.messages[index],conversation.senders[index]))
+    form = forms.AddChat()
+    return render(request, 'chat_list.html', {'form':form, 'chat_list' : chat_list})
 
 
 def profile(request):
