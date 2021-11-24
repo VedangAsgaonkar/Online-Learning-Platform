@@ -17,6 +17,7 @@ class Courses(models.Model):
     assistant_grading_privilege = models.BooleanField(default = False)
     assistant_creation_privilege = models.BooleanField(default = False)
     assistant_adding_privilege = models.BooleanField(default = False)
+    class_average = models.FloatField(default=0, null=True)
 
     class Meta:
         ordering = ('course_name', )

@@ -501,19 +501,42 @@ def announcements_reply(request, course_name, id):
 
 def grades(request, course_name):
     enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
-    course = course=mod.Courses.objects.get(course_name = course_name)
+    course =mod.Courses.objects.get(course_name = course_name)
     grades = {}
     course_total=0
-    for assignment in mod.Assignments.objects.filter(course = course):
-        profile_set = set()
-        for sub in mod.AssignmentFiles.objects.filter(assignment = assignment):
-            if sub.profile not in profile_set:
-                profile_set.add(sub.profile)
-                if sub.grade != 'Not graded yet':
-                    grades[assignment.name] = sub.marks
-                    course_total+=sub.marks*assignment.weightage
+    warning=""
+    # This calculation is for the student
+    if not (enrollment.isTeacher or enrollment.isAssistant):
+        for assignment in mod.Assignments.objects.filter(course = course):
+            profile_set = set()
+            for sub in mod.AssignmentFiles.objects.filter(assignment = assignment, profile = mod.Profile.objects.get(user = request.user)):
+                if sub.profile not in profile_set:
+                    profile_set.add(sub.profile)
+                    if sub.grade != 'Not graded yet':
+                        grades[assignment.name] = sub.marks
+                        course_total+=sub.marks*assignment.weightage
+        enrollment.marks = course_total
+        if(enrollment.marks<course_total/2):
+            warning = "You are Significantly below the class average"
+    else:
+        count=0
+        for assignment in mod.Assignments.objects.filter(course = course):
+            profile_set = set()
+            for sub in mod.AssignmentFiles.objects.filter(assignment = assignment):
+                if sub.profile not in profile_set:
+                    profile_set.add(sub.profile)
+                    if sub.grade != 'Not graded yet':
+                        grades[assignment.name] += sub.marks
+                        course_total+=sub.marks*assignment.weightage
+                        count+=1
+            grades[assignment.name]/=count
+        course_total/=count
+        enrollment.marks = course_total
+        course.class_average = course_total
+
     print("joiefje")
-    return render(request,'grades.html',{'grades':grades, 'course_name':course_name, 'course_total':course_total})
+    
+    return render(request,'grades.html',{'grades':grades, 'course_name':course_name, 'course_total':course_total, 'warning':warning})
 
 
 def message_list(request):
