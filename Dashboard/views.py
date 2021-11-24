@@ -22,6 +22,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 import matplotlib.pyplot as plt
 import numpy as np
 from io import StringIO
+from django.utils import timezone
 
 EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
 email_from = EMAIL_HOST_USER
@@ -447,7 +448,7 @@ def announcements_create(request, course_name):
     #     return redirect('assignments', course_name = course_name,permanent=True)
     # print("In here")
     if request.method == 'POST':
-        form = forms.MessageCreationForm(request.POST)
+        form = forms.AnnouncementCreationForm(request.POST)
         if form.is_valid():
             course1 = mod.Courses.objects.get(course_name = course_name)
             message = mod.Message(course=course1)
@@ -458,7 +459,7 @@ def announcements_create(request, course_name):
             print("fine")
             return redirect('announcements', course_name = course_name,permanent=True)
     else:
-        form = forms.MessageCreationForm()
+        form = forms.AnnouncementCreationForm()
         return render(request,'announcements_new.html',{'form':form})
 
 
@@ -563,7 +564,24 @@ def add_course(request, sample_input):
     return render(request, 'courses.html', data)
 
 
-
+def message_list(request):
+    profile1 = mod.Profile.objects.get(user = request.user)   
+    if request.method == 'POST':
+        form = forms.MessageSearchForm(request.POST)
+        if form.is_valid():
+            reciever = form.cleaned_data.get('username')
+            if mod.Profile.objects.get(user = reciever) :
+                profile2 = mod.Profile.objects.get(user = reciever)
+                if not ( mod.Conversation.objects.get(person1 = profile1, person2 = profile2) or mod.Conversation.objects.get(person1 = profile2, person2 = profile1) ) :
+                    conversation = mod.Conversation(person1 = profile1, person2 = profile2)
+                    conversation.save()
+    form = forms.MessageSearchForm()
+    convo_list = []
+    for convo in mod.Conversation.objects.filter(person1 = profile1):
+        convo_list.append(convo.person2.user)
+    for convo in mod.Conversation.objects.filter(person2 = profile1):
+        convo_list.append(convo.person1.user)
+    return render(request, 'message_list.html', {'form':form, 'list' : convo_list})
 
 def create_profile():
     new_profile = mod.Profile(user = request.user, email_id=request.user.member.email_id)

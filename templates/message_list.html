@@ -1,0 +1,24 @@
+<!-- templates/grades.html-->
+{% extends 'base.html' %}
+{% block title %}Grades{% endblock %}
+
+{% block content1 %}
+
+<form method="post">
+    {% csrf_token %}
+    <label>Enter username here:</label>
+    {{form.content}}
+</form>
+<ul>
+{% for person in list %}
+    <li><a>{{person}}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}
+
+{% block content2 %}
+<center>
+    <h1><a href="{% url 'login' %}">Please Login</a></h1>
+</center>
+{% endblock %}

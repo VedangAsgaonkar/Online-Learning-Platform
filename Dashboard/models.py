@@ -5,6 +5,8 @@ from django.db.models.base import Model
 from django.db.models.deletion import CASCADE
 from django.db.models.expressions import Case
 from django.utils.translation import deactivate
+from django.contrib.postgres.fields import ArrayField
+
 import datetime
 class Courses(models.Model):
     course_name = models.CharField(max_length=100, primary_key=True)
@@ -70,7 +72,7 @@ class Message(models.Model):
     course = models.ForeignKey(Courses, on_delete=CASCADE)
     content = models.CharField(max_length=1000, default="", null=True, blank = True)
     author = models.ForeignKey(Profile, on_delete=CASCADE)
-    time_of_last_edit = models.TimeField(auto_now=True)
+    time_of_last_edit = models.TimeField(auto_now=True, null=True, blank=True)
     id = models.BigAutoField(primary_key=True)
 
 class Replies(models.Model):
@@ -78,9 +80,14 @@ class Replies(models.Model):
     parent_message = models.ForeignKey(Message, on_delete=CASCADE)
     content = models.CharField(max_length=1000, default="", null=True, blank = True)
     author = models.ForeignKey(Profile, on_delete=CASCADE)
-    time_of_last_edit = models.TimeField(auto_now=True)
+    time_of_last_edit = models.TimeField(auto_now=True, null=True, blank=True)
     
-
+class Conversation(models.Model):
+    person1 = models.ForeignKey(Profile, on_delete=CASCADE, related_name='p1')
+    person2 = models.ForeignKey(Profile, on_delete=CASCADE, related_name='p2')
+    senders = ArrayField(models.BooleanField(),null=True, blank=True)
+    times = ArrayField(models.TimeField(auto_now=True, null=True, blank=True), null=True, blank=True)
+    messages = ArrayField(models.CharField(max_length=1000),null=True, blank=True)
 
 # 2 models- Message, Replies
 
