@@ -38,8 +38,12 @@ class EditProfile(forms.Form):
     email_id = forms.EmailField(max_length=100, required=False)
 
 
-class MessageCreationForm(forms.Form):
+class AnnouncementCreationForm(forms.Form):
     content = forms.CharField(label="Message", max_length=1000)
 
 class ReplyCreationForm(forms.Form):
     content = forms.CharField(label="Reply", max_length=1000)
+
+class MessageSearchForm(forms.Form):
+    username = forms.CharField(label="Enter Username", max_length=30)
+    
