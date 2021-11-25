@@ -7,6 +7,10 @@ class AssignmentCreationForm(forms.Form):
     description = forms.CharField(widget=forms.Textarea)
     deadline = forms.DateTimeField(label = "Set Deadline")
 
+class ContentCreationForm(forms.Form):
+    content_name = forms.CharField(label="Content Name", max_length=100)
+    description = forms.CharField(widget=forms.Textarea)
+
 class AssignmentSubmissionForm(forms.Form):
     files = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple' : True}))
 

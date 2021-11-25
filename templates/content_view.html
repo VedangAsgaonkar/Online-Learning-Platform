@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Content View{% endblock %}
+
+{% block content1 %}
+<h1>
+<div style="margin-left: 2cm; margin-top: 2cm;">
+    {{content_name|safe}}
+</div>
+</h1>
+<div style="margin-left: 2cm; font-size: 25px; margin-top: 2cm;">
+    {{content_desc|safe}} <br>
+</div>
+
+
+{% endblock %}
+
+{% block content2 %}
+<center>
+    <h1><a href="{% url 'login' %}">Please Login</a></h1>
+</center>
+{% endblock %}
