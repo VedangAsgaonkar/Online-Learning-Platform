@@ -25,6 +25,7 @@ import numpy as np
 from io import StringIO
 from django.utils import timezone
 
+utc=pytz.timezone('Asia/Kolkata')
 
 EMAIL_HOST_USER = 'technologic.itsp@gmail.com'
 email_from = EMAIL_HOST_USER
@@ -70,7 +71,7 @@ def index(request):
             if total_course==0:
                 courses_dict[course.course_name] = [course.course_info , 100]
             else:
-                courses_dict[course.course_name] = [course.course_info , total_completed/total_course*100]
+                courses_dict[course.course_name] = [course.course_info , format(total_completed/total_course*100,"0.2f")]
         return render(request,'dashboard.html', {'data' : courses_dict , 'to_do': asgn_remaining_dict , 'to_do_dead': asgn_remaining_dict1})
     except:
         return redirect('signup')
@@ -108,8 +109,8 @@ def assignment_submission(request, course_name ,name):
         form = forms.AssignmentSubmissionForm(request.POST, request.FILES)
         print(form.is_valid())
         print(form.cleaned_data.get('name'))
-        if form.is_valid():
-            assignment = mod.Assignments.objects.get(course = course_name, name=name)
+        assignment = mod.Assignments.objects.get(course = course_name, name=name)
+        if form.is_valid() and assignment.deadline > datetime.datetime.now(tz = utc):
             # enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
             for file in request.FILES.getlist('files'):
                 file_name = course_name+'/'+name+'/'+ str(request.user)
@@ -125,13 +126,16 @@ def assignment_submission(request, course_name ,name):
             assigncomplete = mod.AssignmentCompleted.objects.get(enrollment = enrollment , assignment =  assignment)
             assigncomplete.isCompleted = True
             assigncomplete.save()
+        elif form.is_valid():
+            return render(request, 'assignment_submission.html', {'form' : form, 'asgn_name' : assignment.name, 'asgn' : assignment.description, 'asgn_feedback': "Late submission, closed ",'asgn_grade': "Late ",'asgn_marks' : "NULL", 'asgn_deadline' : assignment.deadline} )
         return redirect('assignments', course_name=course_name ,permanent=True)
     else:
+        assignment = mod.Assignments.objects.get(course = course_name, name=name)
         enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
         course = mod.Courses.objects.get(course_name = course_name)
         if enrollment.isTeacher==True or (enrollment.isAssistant and course.assistant_grading_privilege):
             return render(request, 'assignment_download.html')
-        else:
+        elif assignment.deadline > datetime.datetime.now(tz = utc):
             asgn_desc = mod.Assignments.objects.get(course = course_name,name=name).description
             form = forms.AssignmentSubmissionForm()
             assignment = mod.Assignments.objects.get(course = course_name, name=name)
@@ -140,7 +144,9 @@ def assignment_submission(request, course_name ,name):
                 asgn_file = mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)).first()
                 return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade, 'asgn_marks': asgn_file.marks,'isCompleted' : assigncomplete.isCompleted,'asgn_deadline' : assignment.deadline})
                 # change form above to editable assignment submission
-            return render(request, 'assignment_submission.html', {'form' : form, 'asgn_name' : assignment.name, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet",'asgn_marks' : "NULL", 'asgn_deadline' : assignment.deadline} )
+            return render(request, 'assignment_submission.html', {'form' : form,'exists':True ,'asgn_name' : assignment.name, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet",'asgn_marks' : "NULL", 'asgn_deadline' : assignment.deadline} )
+        else :
+            return render(request, 'assignment_submission.html', {'exists':False, 'asgn_name' : assignment.name, 'asgn' : assignment.description, 'asgn_feedback': "Late",'asgn_grade': "Late",'asgn_marks' : "NULL", 'asgn_deadline' : assignment.deadline} )
 
 def create_barchart(x_data):
     imgdata = StringIO()
@@ -244,36 +250,38 @@ def assignment_creation(request, course_name):
     if request.method == 'POST':
         form = forms.AssignmentCreationForm(request.POST)
 
-        if form.is_valid():
-            course1 = mod.Courses.objects.get(course_name = course_name)
-            assignment = mod.Assignments(course=course1)
-            assignment.name = form.cleaned_data.get('assignment_name')
-            assignment.weightage = form.cleaned_data.get('weightage')
-            assignment.deadline = form.cleaned_data.get('deadline')
-            print("fine")
-            assignment.description = markdown.markdown(form.cleaned_data.get('description'))
-            print(markdown.markdown(form.cleaned_data.get('description')))
-            assignment.save()
+        if form.is_valid() and form.cleaned_data.get('deadline') > datetime.datetime.now(tz = utc) :
+                print(str(form.cleaned_data.get('deadline')))
+                print(str(datetime.datetime.now(tz = utc)))
+                course1 = mod.Courses.objects.get(course_name = course_name)
+                assignment = mod.Assignments(course=course1)
+                assignment.name = form.cleaned_data.get('assignment_name')
+                assignment.weightage = form.cleaned_data.get('weightage')
+                assignment.deadline = form.cleaned_data.get('deadline')
+                
+                assignment.description = markdown.markdown(form.cleaned_data.get('description'))
+                print(markdown.markdown(form.cleaned_data.get('description')))
+                assignment.save()
 
-            id_set = set()
-            for e in mod.Enrollment.objects.filter(course = course1):
-                profile_e = e.profile
-                mail_e = profile_e.email_id
-                if mail_e:
-                    id_set.add(mail_e)
-            id_list = list(id_set)
-            print(id_list)
-            subject = "New assignment created : " + form.cleaned_data.get('assignment_name') + " in course : " + course_name
-            message = "Instructor " + str(request.user) + " has added a new assignment " + form.cleaned_data.get('assignment_name') + " in course " + course_name + ". Description :\n"
-            html_message = "Instructor " + str(request.user) + " has added a new assignment " + form.cleaned_data.get('assignment_name') + " in course " + course_name + ". Description :<br>"+markdown.markdown(form.cleaned_data.get('description'))
-            t2 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, html_message ))  
-            t2.start() 
-            e_iter = mod.Enrollment.objects.filter(course = course_name)
-            for e in e_iter :
-                x = mod.AssignmentCompleted(enrollment = e, assignment = assignment)
-                x.save()
-                print(x.isCompleted)
-            return redirect('assignments', course_name = course_name,permanent=True)
+                id_set = set()
+                for e in mod.Enrollment.objects.filter(course = course1):
+                    profile_e = e.profile
+                    mail_e = profile_e.email_id
+                    if mail_e:
+                        id_set.add(mail_e)
+                id_list = list(id_set)
+                print(id_list)
+                subject = "New assignment created : " + form.cleaned_data.get('assignment_name') + " in course : " + course_name
+                message = "Instructor " + str(request.user) + " has added a new assignment " + form.cleaned_data.get('assignment_name') + " in course " + course_name + ". Description :\n"
+                html_message = "Instructor " + str(request.user) + " has added a new assignment " + form.cleaned_data.get('assignment_name') + " in course " + course_name + ". Description :<br>"+markdown.markdown(form.cleaned_data.get('description'))
+                t2 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, html_message ))  
+                t2.start() 
+                e_iter = mod.Enrollment.objects.filter(course = course_name)
+                for e in e_iter :
+                    x = mod.AssignmentCompleted(enrollment = e, assignment = assignment)
+                    x.save()
+                    print(x.isCompleted)
+                return redirect('assignments', course_name = course_name,permanent=True)
     else:
         form = forms.AssignmentCreationForm()
     return render(request, 'assignment_creation.html',{'form':form})
@@ -812,6 +820,22 @@ def GUI_grader(request, course_name, name, student_name):
         return render(request , 'GUI_grader.html', context) 
 
 
+
+def edit_deadline(request , course_name, name):
+    if request.method == 'POST':
+        form = forms.EditDeadline(request.POST)
+        if form.is_valid() and form.cleaned_data.get('deadline') > datetime.datetime.now(tz = utc):
+            course = mod.Courses.objects.get(course_name = course_name)
+            assignment = mod.Assignments.objects.get(course = course , name = name)
+            assignment.deadline = form.cleaned_data.get('deadline')
+            assignment.save()
+            return redirect('assignment_download',course_name = course_name, name=name, permanent = True) 
+        else:      
+            return render(request , 'edit_deadline.html', {'form':form}) 
+    else:
+        form = forms.EditDeadline()
+        context = {'form': form}
+        return render(request , 'edit_deadline.html', context) 
 
 
 

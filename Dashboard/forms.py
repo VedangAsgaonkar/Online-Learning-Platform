@@ -58,3 +58,6 @@ class GUIGrader(forms.Form):
     marks = forms.FloatField(required=True) 
     feedback = forms.CharField(required=False)
     grade = forms.CharField(required=False)
+
+class EditDeadline(forms.Form):
+    deadline = forms.DateTimeField(label = "Change Deadline")

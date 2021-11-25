@@ -5,9 +5,21 @@
 
 <div style="margin-left: 2cm; margin-top: 4cm;">
 <h2>Give Feedback Here</h2>
-<form enctype="multipart/form-data" method="post">
+<form method="post">
     {% csrf_token %}
-    {{form}}
+    <label>Marks</label>
+    {{ form.marks}}
+    <br>
+    <p></p>
+    <label>Grade</label>
+    {{ form.grade }}
+    <br>
+    <p></p>
+    <label>Feedback</label>
+    {{ form.feedback }}
+
+    <br>
+    <p></p>
     <input type="submit" value="Submit">
 </form>
 </div>

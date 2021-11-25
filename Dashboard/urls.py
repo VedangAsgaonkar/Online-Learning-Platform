@@ -27,8 +27,11 @@ urlpatterns=[
     path("settings/",views.edit_profile,name="settings"),
     path("messages/", views.message_list, name="message_list"),
     path("messages/<str:person>/", views.chat_screen,name="chat_screen"),
+    path("courses/<str:course_name>/assignments/<str:name>/edit_properties/edit_deadline/",views.edit_deadline, name = "edit_deadline"),
     path("courses/<str:course_name>/assignments/<str:name>/assignment_feedback/",views.assignment_feedback, name = "feedback"),
     path("courses/<str:course_name>/assignments/<str:name>/<str:student_name>/",views.GUI_grader, name = "GUI_grader"),
+
+
 
 
 
