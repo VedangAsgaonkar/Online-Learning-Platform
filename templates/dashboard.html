@@ -51,12 +51,12 @@
   <center>
   {% if asgn.2 %}
   <a href="{% url 'assignment_download' asgn.3 asgn.0 %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
-      {{course}}: <br>{{asgn.0}}<br>
+      {{course}}:
       Deadline: {{asgn.1}}</button></a>
   <br>
   {% else %}
   <a href="{% url 'assignment_submission' asgn.3 asgn.0 %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
-    {{course}}: <br>{{asgn.0}}<br>
+    {{course}}:
     Deadline: {{asgn.1}}</button></a>
   <br>
   {% endif %}
