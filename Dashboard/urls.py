@@ -28,5 +28,9 @@ urlpatterns=[
     path("messages/", views.message_list, name="message_list"),
     path("messages/<str:person>/", views.chat_screen,name="chat_screen"),
     path("courses/<str:course_name>/assignments/<str:name>/assignment_feedback/",views.assignment_feedback, name = "feedback"),
+    path("courses/<str:course_name>/assignments/<str:name>/assignment_feedback/<str:student_name>/",views.GUI_grader, name = "GUI_grader"),
+
+
+
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

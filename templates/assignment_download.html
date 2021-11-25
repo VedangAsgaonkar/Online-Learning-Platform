@@ -14,6 +14,8 @@
 <ul>
     {% for sub in subs %}
     <li>{{sub}}</li>
+    <a style="font-size: 2em;" href = "{% url 'GUI_grader' course_name name %}">Give feedback</a>
+
     {% endfor %}
    
 

@@ -54,3 +54,6 @@ class MessageSearchForm(forms.Form):
 class AddChat(forms.Form):
     chat_message = forms.CharField(label="Enter your Message", max_length=1000)
 
+class GUIGrader(forms.Form):
+    marks = forms.FloatField(required=True) 
+    feedback = forms.CharField(required=False)
