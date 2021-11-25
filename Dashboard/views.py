@@ -780,7 +780,25 @@ def edit_profile(request):
 
 
 
-
+def GUI_grader(request, course_name, name, student_name):
+    if request.method == 'POST':
+        form = forms.GUIGrader(request.POST)
+        student = mod.Profile.objects.get(user = student_name)
+        course = mod.Courses.objects.get(course_name = course_name)
+        assignment = mod.Assignments.objects.get(course = course, name = name)
+        assignment_file = mod.AssignmentFiles.objects.filter(profile = student, assignment = assignment)
+        if form.is_valid():
+            for assignment_profile in assignment_file:
+                assignment_profile.feedback = form.cleaned_data.get('feedback')
+                assignment_profile.marks = form.cleaned_data.get('marks')
+                assignment_profile.save()
+                print("yo yo honey singh")
+        return redirect('profile',  permanent = True) 
+    else:
+        form = forms.GUIGrader()
+        context = {'form': form}
+        print("my nm")
+        return render(request , 'GUI_grader.html', context) 
 
 
 
