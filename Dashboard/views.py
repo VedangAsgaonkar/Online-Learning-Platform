@@ -83,6 +83,7 @@ def courses(request, input_course_name = "DEFAULT"):
 
 def assignments(request, course_name):
     assignment_dict = {}
+    content_dict = {}
     course = mod.Courses.objects.get(course_name = course_name)
     enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
     if enrollment.isTeacher or (enrollment.isAssistant and course.assistant_grading_privilege):
@@ -93,7 +94,11 @@ def assignments(request, course_name):
         for asgn in mod.Assignments.objects.all() :
             if(asgn.course == course):
                 assignment_dict[asgn.name] = asgn.description
-    return render(request,'assignments.html', {'data' : assignment_dict, 'course' : course_name, 'teacher':teacher})
+    if(mod.CourseContent.objects.filter(course=course)):
+        for content in mod.CourseContent.objects.all() :
+            if(content.course == course):
+                content_dict[content.name] = content.description
+    return render(request,'assignments.html', {'asgn_data' : assignment_dict,'content_data' : content_dict, 'course' : course_name, 'teacher':teacher})
 
 def assignment_submission(request, course_name ,name):
     if request.method == 'POST':
@@ -133,7 +138,7 @@ def assignment_submission(request, course_name ,name):
                 asgn_file = mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)).first()
                 return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade,'isCompleted' : assigncomplete.isCompleted})
                 # change form above to editable assignment submission
-            return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet", 'asgn_deadline' : assignment.deadline} )
+            return render(request, 'assignment_submission.html', {'form' : form, 'asgn_name' : assignment.name, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet", 'asgn_deadline' : assignment.deadline} )
 
 def create_barchart(x_data):
     imgdata = StringIO()
@@ -145,6 +150,11 @@ def create_barchart(x_data):
     data = imgdata.getvalue()
     plt.clf()
     return data 
+
+def content_view(request,course_name,name):
+    content = mod.CourseContent.objects.get(course = course_name,name=name)
+    return render(request, 'content_view.html', {'content_name':content.name, 'content_desc':content.description})
+
 
 def assignment_download(request,course_name,name):
     fl_path = 'files/'+course_name+'/'+name
@@ -265,7 +275,44 @@ def assignment_creation(request, course_name):
         form = forms.AssignmentCreationForm()
     return render(request, 'assignment_creation.html',{'form':form})
 	
-    
+def content_creation(request, course_name):
+    enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
+    course = mod.Courses.objects.get(course_name = course_name)
+    if not (enrollment.isTeacher or (enrollment.isAssistant and course.assistant_creation_privilege)) :
+        return redirect('assignments', course_name = course_name,permanent=True)
+    print("In here")
+    if request.method == 'POST':
+        form = forms.ContentCreationForm(request.POST)
+
+        if form.is_valid():
+            course1 = mod.Courses.objects.get(course_name = course_name)
+            content = mod.CourseContent(course=course1)
+            content.name = form.cleaned_data.get('content_name')
+            print("fine")
+            content.description = markdown.markdown(form.cleaned_data.get('description'))
+            print(markdown.markdown(form.cleaned_data.get('description')))
+            content.save()
+
+            id_set = set()
+            for e in mod.Enrollment.objects.filter(course = course1):
+                profile_e = e.profile
+                mail_e = profile_e.email_id
+                if mail_e:
+                    id_set.add(mail_e)
+            id_list = list(id_set)
+            print(id_list)
+            subject = "New course content added : " + form.cleaned_data.get('content_name') + " in course : " + course_name
+            message = "Instructor " + str(request.user) + " has added new content " + form.cleaned_data.get('content_name') + " in course " + course_name + ". Description :\n"
+            html_message = "Instructor " + str(request.user) + " has added new content " + form.cleaned_data.get('content_name') + " in course " + course_name + ". Description :<br>"+markdown.markdown(form.cleaned_data.get('description'))
+            t6 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, html_message ))  
+            t6.start() 
+            return redirect('assignments', course_name = course_name,permanent=True)
+    else:
+        form = forms.ContentCreationForm()
+    return render(request, 'content_creation.html',{'form':form})
+
+
+
 def course_creation(request):
     if request.method == 'POST':
         print("HELLO")

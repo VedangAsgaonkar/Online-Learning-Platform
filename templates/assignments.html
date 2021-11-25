@@ -3,17 +3,21 @@
 {% block title %}Assignments{% endblock %}
 
 {% block content1 %}
-
-<div style="float: right;">
-    <a href="{% url 'assignment_creation' course %}" >Create Assignment</a>
-</div>
 <center>
     <h1 class="text-primary" style="font-size: 100px;margin-left:105px;">{{course}}</h1>
 </center>
+<br>
+<div style="float: left;">
+    <a href="{% url 'assignment_creation' course %}" >Create Assignment</a>
+    <br>
+    <a href="{% url 'content_creation' course %}" >Add Course Content</a>
+
+</div>
+<br><br><br>
 <ul>
 
     {% if teacher %}
-    {% for name,assignment in data.items %}
+    {% for name,assignment in asgn_data.items %}
     <li class="username" class="badge bg-primary text-wrap">
         <a href="{% url 'assignment_download' course name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
             {{name}}</button></a>Teacher
@@ -21,7 +25,7 @@
     </li>
     {% endfor %}
     {% else %}
-    {% for name,assignment in data.items %}
+    {% for name,assignment in asgn_data.items %}
     <li class="username" class="badge bg-primary text-wrap">
         <a href="{% url 'assignment_submission' course name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
             {{name}}</button></a>
@@ -30,6 +34,13 @@
     {% endfor %}
     {% endif %}
     
+    {% for name,content in content_data.items %}
+    <li class="username" class="badge bg-primary text-wrap">
+        <a href="{% url 'content_view' course name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+            {{name}}</button></a>Teacher
+        <br>
+    </li>
+    {% endfor %}
 
 
 </ul>

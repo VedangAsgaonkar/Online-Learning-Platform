@@ -52,6 +52,12 @@ class Assignments(models.Model):
     deadline = models.DateTimeField(blank = True, null = True)
     weightage = models.FloatField(default = 0)
 
+
+class CourseContent(models.Model):
+    course = models.ForeignKey(Courses , on_delete = models.CASCADE, null=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    description = models.CharField(max_length=1200, blank=True, null=True)
+
 def getFileName(instance, filename):
     return 'files/'+instance.file_name+'/'+filename
 
@@ -98,7 +104,7 @@ class Conversation(models.Model):
 
 
 
-
+# Videos , URLS, Text
 
 
 
