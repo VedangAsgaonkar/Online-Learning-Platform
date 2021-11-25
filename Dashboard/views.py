@@ -793,7 +793,7 @@ def GUI_grader(request, course_name, name, student_name):
                 assignment_profile.marks = form.cleaned_data.get('marks')
                 assignment_profile.save()
                 print("yo yo honey singh")
-        return redirect('profile',  permanent = True) 
+        return redirect('assignment_download', name = name , course_name = course_name,  permanent = True) 
     else:
         form = forms.GUIGrader()
         context = {'form': form}
