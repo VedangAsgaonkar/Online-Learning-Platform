@@ -107,7 +107,7 @@ def assignment_submission(request, course_name ,name):
             assignment = mod.Assignments.objects.get(course = course_name, name=name)
             # enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
             for file in request.FILES.getlist('files'):
-                file_name = course_name+'/'+name+'/'+str(request.user)
+                file_name = course_name+'/'+name+'/'+ str(request.user)
                 file1 = mod.AssignmentFiles(assignment=assignment, file_name = file_name ,file=file, profile = mod.Profile.objects.get(user = request.user))
                 file1.save()
             print("all ok")
@@ -149,7 +149,7 @@ def create_barchart(x_data):
     return data 
 
 def assignment_download(request,course_name,name):
-    fl_path = 'files/'+course_name+'/'+name
+    fl_path = 'files/' + course_name + '/' + name
     if request.method=='POST' and os.path.isdir(fl_path):
         output_filename = 'zipped/zip'
         shutil.make_archive(output_filename, 'zip', fl_path)
@@ -227,6 +227,7 @@ def assignment_feedback(request,course_name,name):
 def assignment_creation(request, course_name):
     enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
     course = mod.Courses.objects.get(course_name = course_name)
+    
     if not (enrollment.isTeacher or (enrollment.isAssistant and course.assistant_creation_privilege)) :
         return redirect('assignments', course_name = course_name,permanent=True)
     print("In here")
