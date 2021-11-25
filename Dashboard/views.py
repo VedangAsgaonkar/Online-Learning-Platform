@@ -792,7 +792,17 @@ def GUI_grader(request, course_name, name, student_name):
                 assignment_profile.feedback = form.cleaned_data.get('feedback')
                 assignment_profile.marks = form.cleaned_data.get('marks')
                 assignment_profile.save()
-                print("yo yo honey singh")
+        allCorrected = True
+        for enrollment in mod.Enrollment.objects.filter(course = course, isTeacher = False) :
+            allCorrected = allCorrected and mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment).isCompleted
+            if not allCorrected :
+                break
+        if allCorrected :
+            for enrollment in mod.Enrollment.objects.filter(course = course, isTeacher = True) : 
+                x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
+                x.isCompleted = True
+                x.save()
+
         return redirect('assignment_download', name = name , course_name = course_name,  permanent = True) 
     else:
         form = forms.GUIGrader()
