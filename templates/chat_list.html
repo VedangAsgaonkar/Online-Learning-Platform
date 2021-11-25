@@ -3,28 +3,74 @@
 {% block title %}Message List{% endblock %}
 
 {% block content1 %}
-
-<form method="post">
-    {% csrf_token %}
-    <br>
-    {{form}}
-    <input type="submit" value="Submit">
-</form>
 <br>
-<ul>
+<div style="margin-left: 300px;">
+<h1>Chat</h1>
+</div>
+<div id="myDiv" style="width: 650px; height: 600px; overflow: auto; background-color: rgba(245, 245, 245, 0.712) ;margin-left: 50px;" >
+<div class="grid">
 {% for chat_message in chat_list %}
-    {% if chat_message.1 %}
+<div class="row">
+    {% if is_sender %}
+    {% if not chat_message.1 %}
     <div style="margin-left: 300px;">
-        <li>{{chat_message.0}} </li>
+        <div class="card" style="width: 300px;">
+            <div class="card-body" style="background-color: rgb(161, 198, 221);">
+                {{chat_message.0}} 
+            </div>
+        </div>
     </div>
     {% else %}
-    <div style="float: left;">
-        <li>{{chat_message.0}} </li>
+    <div style="margin-left: 100px;">
+        <div class="card" style="width: 300px;">
+            <div class="card-body">
+                {{chat_message.0}} 
+            </div>
+        </div> 
     </div>
     <br>
     {% endif %}
+    {% else %}
+    {% if chat_message.1 %}
+    <div style="margin-left: 300px;">
+        <div class="card" style="width: 300px;">
+            <div class="card-body"  style="background-color: rgb(161, 198, 221);">
+                {{chat_message.0}} 
+            </div>
+        </div> 
+    </div>
+    {% else %}
+    <div style="margin-left: 100px;">
+        <div class="card" style="width: 300px;">
+            <div class="card-body">
+                {{chat_message.0}} 
+            </div>
+        </div> 
+    </div>
+    <br>
+    {% endif %}
+    {% endif %}
+</div> 
 {% endfor %}
-</ul>
+</div>
+<br>
+<hr>
+</div>
+<div style="margin-left: 100px;">
+    <form method="post">
+        {% csrf_token %}
+        <br>
+        {{form}}
+        <input type="submit" value="Enter">
+    </form>
+</div>
+
+
+<script>
+    var myDiv = document.getElementById("myDiv");
+    myDiv.scrollTop = myDiv.scrollHeight;
+</script>
+
 {% endblock %}
 
 {% block content2 %}

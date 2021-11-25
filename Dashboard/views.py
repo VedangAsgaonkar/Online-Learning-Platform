@@ -615,11 +615,13 @@ def chat_screen(request, person):
     profile1 = mod.Profile.objects.get(user = request.user)
     receiver_person = mod.Profile.objects.get(user = person )
     chat_list = []
+    sender = True
     if request.method == 'POST':
         form = forms.AddChat(request.POST)
         if form.is_valid():
             chat_message = form.cleaned_data.get('chat_message')
             if mod.Conversation.objects.filter(person1 = profile1, person2 = receiver_person):
+                sender = False
                 conversation =  mod.Conversation.objects.get(person1 = profile1, person2 = receiver_person)
                 if conversation.messages == None:
                     conversation.senders= []
@@ -649,6 +651,7 @@ def chat_screen(request, person):
                 print(chat_message)
     else:
         if mod.Conversation.objects.filter(person1 = profile1, person2 = receiver_person):
+            sender = False
             conversation =  mod.Conversation.objects.get(person1 = profile1, person2 = receiver_person)
             if conversation.messages == None:
                 conversation.senders= []
@@ -667,7 +670,7 @@ def chat_screen(request, person):
             for index in range(length):
                 chat_list.append((conversation.messages[index],conversation.senders[index]))
     form = forms.AddChat()
-    return render(request, 'chat_list.html', {'form':form, 'chat_list' : chat_list})
+    return render(request, 'chat_list.html', {'form':form, 'chat_list' : chat_list, 'is_sender' : sender })
 
 
 def profile(request):
