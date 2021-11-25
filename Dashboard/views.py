@@ -55,12 +55,14 @@ def index(request):
                 try:
                     x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
                     if not x.isCompleted and assignment.deadline != None:
+                        course_var = course.course_name + ": " + assignment.name
+
                         if enrollment.isTeacher:
-                            asgn_remaining_dict1[course.course_name] = [assignment.name ,assignment.deadline, True ]
+                            asgn_remaining_dict1[course_var] = [assignment.name ,assignment.deadline, True , course.course_name]
                         elif enrollment.isAssistant and course.assistant_grading_privilege:
-                            asgn_remaining_dict1[course.course_name] = [assignment.name ,assignment.deadline, True ]
+                            asgn_remaining_dict1[course_var] = [assignment.name ,assignment.deadline, True , course.course_name]
                         elif not enrollment.isAssistant:
-                            asgn_remaining_dict1[course.course_name] = [assignment.name ,assignment.deadline, False ]
+                            asgn_remaining_dict1[course_var] = [assignment.name ,assignment.deadline, False , course.course_name]
                     else :
                         total_completed+=1
                 except Exception as e:
