@@ -11,8 +11,8 @@
 
 <div style="font-size: 25px; margin-left: 2cm;">
     <ul>
-        {% for part in participants %}
-            <li>{{part}}</li>
+        {% for part, role in participants.items %}
+            <li>{{part}} : <span style="color: brown;">{{role}}</span></li>
         {% endfor %}
     </ul>
     <br><br>

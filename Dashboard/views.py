@@ -493,7 +493,8 @@ def course_stats(request, course_name):
         # print(grades)
         assignment_names.append(assignment.name)
         assignment_grades.append(grades)
-        assignment_stats_dict[assignment.name] = "Mean : " + str(np.mean(grades)) + " Std : " + str(np.std(grades))
+        if len(grades) !=0 :
+            assignment_stats_dict[assignment.name] = "Mean : " + str(np.mean(grades)) + " Std : " + str(np.std(grades))
         chart = create_boxchart(assignment_grades, assignment_names)
         # print(chart,'chart')
         # print(assignment_stats_dict)
@@ -573,9 +574,14 @@ def announcements_reply(request, course_name, id):
 
 def participants(request, course_name):
     course = mod.Courses.objects.get(course_name = course_name)
-    members = []
+    members = {}
     for mem in mod.Enrollment.objects.filter(course = course):
-        members.append(mem.profile.user)
+        if mem.isTeacher : 
+            members[mem.profile.user] = 'Teacher'
+        elif mem.isAssistant:
+            members[mem.profile.user] = 'Teaching Assistant'
+        else:
+            members[mem.profile.user] = 'Student'
     return render(request,'participants.html',{'participants':members, 'course':course_name})
 
 def grades(request, course_name):
@@ -662,7 +668,7 @@ def chat_screen(request, person):
                 conversation.save()
                 length = len(conversation.messages)
                 for index in range(length):
-                    chat_list.append((conversation.messages[index],conversation.senders[index]))
+                    chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
             elif mod.Conversation.objects.filter(person1 = receiver_person, person2 = profile1 ):
                 conversation =  mod.Conversation.objects.get(person1 = receiver_person, person2 = profile1)
                 if conversation.messages == None:
@@ -675,7 +681,7 @@ def chat_screen(request, person):
                 conversation.save()
                 length = len(conversation.messages)
                 for index in range(length):
-                    chat_list.append((conversation.messages[index],conversation.senders[index]))
+                    chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
             else:
                 print(chat_message)
     else:
@@ -688,7 +694,7 @@ def chat_screen(request, person):
                 conversation.messages = []
             length = len(conversation.messages)
             for index in range(length):
-                chat_list.append((conversation.messages[index],conversation.senders[index]))
+                chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
         elif mod.Conversation.objects.filter(person1 = receiver_person, person2 = profile1 ):
             conversation =  mod.Conversation.objects.get(person1 = receiver_person, person2 = profile1)
             if conversation.messages == None:
@@ -697,7 +703,7 @@ def chat_screen(request, person):
                 conversation.messages = []        
             length = len(conversation.messages)
             for index in range(length):
-                chat_list.append((conversation.messages[index],conversation.senders[index]))
+                chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
     form = forms.AddChat()
     return render(request, 'chat_list.html', {'form':form, 'chat_list' : chat_list, 'is_sender' : sender })
 
