@@ -5,48 +5,50 @@
 {% block content1 %}
 
 <center>
-    <h1 class="text-primary" style="font-size: 100px;">Welcome to {{ name }} !</h1>
+    <h1 class="text-primary" style="font-size: 70px;">Welcome to {{ name }} !</h1>
     <!-- {{ course }} -->
     <br>
     <!-- {{profileq}} -->
-    <h2>{{info}}</h2>
+    <h2 style="font-size: 30px;">{{info}}</h2>
 </center>
-<ul>
 
-
-    <li class="username" class="badge bg-primary text-wrap">
+<div class="container">
+    <div class="row">
         <a href="{% url 'announcements' name %}" class="user_button" class="btn btn-link" button type="button"
-            style="white-space: normal;"> Announcements and Posts</button></a>
+            style="white-space: normal; color: black; width: 300px;"> Announcements and Posts</button></a>
         <br>
-    </li>
-    <li class="username" class="badge bg-primary text-wrap">
-        <a href="" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+    </div>
+    <div class="row">
+        <a href="" class="user_button" class="btn btn-link" button type="button"
+            style="white-space: normal; color: black; width: 300px;">
             Exams</button></a>
         <br>
-    </li>
-    <li class="username" class="badge bg-primary text-wrap">
-        <a href="{% url 'assignments' name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;"> Assignments and Course Content
+    </div>
+    <div class="row">
+        <a href="{% url 'assignments' name %}" class="user_button" class="btn btn-link" button type="button"
+            style="white-space: normal; color: black; width: 300px;"> Assignments and Course Content
         </button></a>
         <br>
-    </li>
-    <li class="username" class="badge bg-primary text-wrap">
-        <a href="{% url 'grades' name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+    </div>
+    <div class="row">
+        <a href="{% url 'grades' name %}" class="user_button" class="btn btn-link" button type="button"
+            style="white-space: normal; color: black; width: 300px;">
             Grades</button></a>
         <br>
-    </li>
-    <li class="username" class="badge bg-primary text-wrap">
-        <a href="{% url 'course_email' name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+    </div>
+    <div class="row">
+        <a href="{% url 'course_email' name %}" class="user_button" class="btn btn-link" button type="button"
+            style="white-space: normal; color: black; width: 300px;">
             Send access mail</button></a>
         <br>
-    </li>
-    <li class="username" class="badge bg-primary text-wrap">
-        <a href="{% url 'course_stats' name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
+    </div>
+    <div class="row">
+        <a href="{% url 'course_stats' name %}" class="user_button" class="btn btn-link" button type="button"
+            style="white-space: normal; color: black; width: 300px;">
             Course Statistics</button></a>
         <br>
-    </li>
-
-
-</ul>
+    </div>
+</div>
 
 <br><br>
 <!--div class="text-info">
@@ -55,6 +57,7 @@
     </center>
 </div-->
 <br><br><br>
+
 {% endblock %}
 
 {% block content2 %}

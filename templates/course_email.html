@@ -8,8 +8,16 @@
 <center>
 <form method="post" style="margin-top:15px;">
     {% csrf_token %}
-    {{form}}
-    <input type="submit" value="Submit">
+    <label style="font-size: 24px;">Email List</label>
+    {{form.email_list}}
+    <br>
+    <label style="font-size: 24px;">Master Email</label>
+    {{form.master_email}}
+    <br>
+    <label style="font-size: 24px;">Assistant Email</label>
+    {{form.assistant_email}}
+    <br>
+    <input type="submit" value="Mail">
 </form>
 </center>
 
