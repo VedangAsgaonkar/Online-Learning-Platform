@@ -342,7 +342,7 @@ def course_creation(request):
                 course_added.assistant_adding_privilege = form.cleaned_data.get('assistant_can_add_students')
                 course_added.assistant_creation_privilege = form.cleaned_data.get('assistant_can_create_assignment')
                 course_added.assistant_grading_privilege  = form.cleaned_data.get('assistant_can_grade_assignments')
-
+                course_added.discussion_allowed = True
                 course_added.save()
             except Exception as e:
                 print("Course already exists, collision!")
@@ -502,6 +502,17 @@ def course_stats(request, course_name):
     else:
          return render(request, 'course_stats.html', {'course_name' : course_name, 'assignment_dict' : assignment_stats_dict})
 
+def stop_announcements(request, course_name):
+    course = mod.Courses.objects.get(course_name = course_name)
+    course.discussion_allowed = False
+    course.save()
+    return announcements(request, course_name)
+
+def start_announcements(request, course_name):
+    course = mod.Courses.objects.get(course_name = course_name)
+    course.discussion_allowed = True
+    course.save()
+    return announcements(request, course_name)
 
 def announcements_create(request, course_name):
     enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = course_name)
@@ -540,8 +551,8 @@ def announcements(request, course_name):
                 announcement_dict[current_message] = []
                 for reply in mod.Replies.objects.filter(parent_message = parent_post):
                     announcement_dict[current_message].append(reply.content)
-                    
-    return render(request,'announcements.html', {'data' : announcement_dict, 'course' : course_name, 'teacher':teacher})
+    allowed = course.discussion_allowed
+    return render(request,'announcements.html', {'data' : announcement_dict, 'course' : course_name, 'teacher':teacher, 'allowed':allowed})
 
 def announcements_reply(request, course_name, id):
     if request.method == 'POST':

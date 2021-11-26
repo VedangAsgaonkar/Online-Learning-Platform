@@ -18,6 +18,7 @@ class Courses(models.Model):
     assistant_creation_privilege = models.BooleanField(default = False)
     assistant_adding_privilege = models.BooleanField(default = False)
     class_average = models.FloatField(default=0, null=True)
+    discussion_allowed = models.BooleanField(default=True)
 
     class Meta:
         ordering = ('course_name', )
