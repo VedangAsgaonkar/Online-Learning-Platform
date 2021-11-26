@@ -657,7 +657,7 @@ def chat_screen(request, person):
                 conversation.save()
                 length = len(conversation.messages)
                 for index in range(length):
-                    chat_list.append((conversation.messages[index],conversation.senders[index]))
+                    chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
             elif mod.Conversation.objects.filter(person1 = receiver_person, person2 = profile1 ):
                 conversation =  mod.Conversation.objects.get(person1 = receiver_person, person2 = profile1)
                 if conversation.messages == None:
@@ -670,7 +670,7 @@ def chat_screen(request, person):
                 conversation.save()
                 length = len(conversation.messages)
                 for index in range(length):
-                    chat_list.append((conversation.messages[index],conversation.senders[index]))
+                    chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
             else:
                 print(chat_message)
     else:
@@ -683,7 +683,7 @@ def chat_screen(request, person):
                 conversation.messages = []
             length = len(conversation.messages)
             for index in range(length):
-                chat_list.append((conversation.messages[index],conversation.senders[index]))
+                chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
         elif mod.Conversation.objects.filter(person1 = receiver_person, person2 = profile1 ):
             conversation =  mod.Conversation.objects.get(person1 = receiver_person, person2 = profile1)
             if conversation.messages == None:
@@ -692,7 +692,7 @@ def chat_screen(request, person):
                 conversation.messages = []        
             length = len(conversation.messages)
             for index in range(length):
-                chat_list.append((conversation.messages[index],conversation.senders[index]))
+                chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
     form = forms.AddChat()
     return render(request, 'chat_list.html', {'form':form, 'chat_list' : chat_list, 'is_sender' : sender })
 
