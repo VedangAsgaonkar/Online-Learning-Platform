@@ -36,12 +36,14 @@
             Grades</button></a>
         <br>
     </div>
+    {% if isTeacher %}
     <div class="row">
         <a href="{% url 'course_email' name %}" class="user_button" class="btn btn-link" button type="button"
             style="white-space: normal; color: black; width: 300px;">
             Send access mail</button></a>
         <br>
     </div>
+    {% endif %}
     <div class="row">
         <a href="{% url 'course_stats' name %}" class="user_button" class="btn btn-link" button type="button"
             style="white-space: normal; color: black; width: 300px;">

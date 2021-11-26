@@ -79,9 +79,12 @@ def index(request):
 def courses(request, input_course_name = "DEFAULT"):
     if(mod.Courses.objects.filter(course_name = input_course_name)):
         course = mod.Courses.objects.get(course_name = input_course_name)
+    profile = mod.Profile.objects.get(user = request.user)
+    enrollment = mod.Enrollment.objects.get(profile = profile , course = course)
     data={}
     data['name'] = input_course_name
     data['info'] = course.course_info
+    data['isTeacher'] = enrollment.isTeacher or enrollment.isAssistant
     return render(request,'courses.html', data)
 
 def assignments(request, course_name):
