@@ -37,36 +37,38 @@
             {% endif %}
           </div>
           {% endif %}
-          <div style="height: 600px; width: 350px; overflow: auto;">
+          <ol>
             {% for key,value in data.items %}
+            <li>
+            <div style="height: 300px; width: 900px; overflow: auto;">
             <div class="username" class="badge bg-primary text-wrap">
-              <center>
-                <div style="margin-left: 300px;">
-                  <div class="card" style="width: 300px;">
-                      <div class="card-body" style="background-color: rgb(161, 198, 221);">
-                        {{key.0|safe}}
-                      </div>
+                <div style="margin-left: 10px;">
+                  <div class="card" style="width: 600px;">
+                    <div class="card-body" style="background-color: rgb(161, 198, 221); font-size: 24px;">
+                      {{key.0|safe}}
+                    </div>
                   </div>
-              </div>
-                <br>
-                <ul>
+                </div>
                   {% for reply in value %}
-                  <div class="username" class="badge bg-primary text-wrap">
-                    {{reply|safe}}
+                <div style="margin-left: 10px;">
+                  <div class="card" style="width: 300px; font-size: 20px;">
+                    <div class="card-body">
+                      {{reply|safe}}
+                    </div>
                   </div>
-                  {% endfor %}
-                </ul>
+                </div>
+                {% endfor %}
                 {% if allowed %}
-                <a href="{% url 'announcements_reply' course key.1 %}" class="user_button" class="btn btn-link" button
-                  type="button" style="white-space: normal;">
-                  Reply to this</a>
+                  <div style="font-size: 24px;"><i class="fa fa-send"></i>  <a href="{% url 'announcements_reply' course key.1 %}"> Reply to this </a></div>
                 {% endif %}
                 <br>
                 <br>
-              </center>
             </div>
+            </div>
+            <br>
+           </li>
             {% endfor %}
-          </div>
+          </ol>
         </div>
       </div>
     </div>
