@@ -5,12 +5,12 @@
 {% block content1 %}
 
 <center>
-    <h1 class="text-primary" style="font-size: 100px; margin-left:-10px;">{{user.username}}</h1>
+    <h1 class="text-primary" style="font-size: 70px; margin-left:-10px;">{{user.username}}</h1>
 </center>
 <div style="font-size: 25px; margin-left: 2cm;">
     <ul>
-        <li>Email Address : {{user.member.email_id}}</li>
-        <li>Affiliation : {{user.member.institute_name}} </li>
+        <li>Email Address : <span style="color: brown;">{{user.member.email_id}}</span></li>
+        <li>Affiliation : <span style="color: brown;">{{user.member.institute_name}}</span></li>
         <li>Courses Undertaken</li>
         <ul style="color: brown;">{% for key in courses_list%}
             <li> {{key}}   </li>

@@ -7,8 +7,8 @@
 <div style="margin-left: 300px;">
 <h1>Chat</h1>
 </div>
-<div id="myDiv" style="width: 650px; height: 600px; overflow: auto; background-color: rgba(245, 245, 245, 0.712) ;margin-left: 50px;" >
-<div class="grid">
+<div id="myDiv" style="width: 650px; height: 450px; overflow: auto; margin-left: 50px;" >
+<div class="container">
 {% for chat_message in chat_list %}
 <div class="row">
     {% if is_sender %}
@@ -60,7 +60,8 @@
     <form method="post">
         {% csrf_token %}
         <br>
-        {{form}}
+        <label style="font-size: 24px;"><i class="fa fa-send"></i> Enter Message</label>
+        {{form.chat_message}}
         <input type="submit" value="Enter">
     </form>
 </div>

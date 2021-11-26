@@ -10,61 +10,79 @@
     aria-controls="offcanvasRight">View Assignments</button>
 </span> -->
 
-<div style="float: center; margin-left:15px;margin-top:15px;">
-  <a href="{% url 'course_creation' %}">CREATE NEW COURSE</a>
-</div>
-<div style="float: center;margin-left:15px;">
-  <a href="{% url 'course_access' %}">JOIN A COURSE</a>
-</div>
 
 
-
-<div style = "display: inline-block; padding-left: 50px;">
-  <center>
-    <div class="section" class="text-primary" style="margin-left:-25px;">
-  
-      <div class="text-primary" style="font-size: 100px;">
-        Courses
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <div style="display: inline-block; padding-left: 50px;">
+        <center>
+          <div class="section" class="text-primary" style="margin-left:-25px;">
+            <div style="font-size: 60px; color: black;">
+              Courses
+            </div>
+          </div>
+        </center>
+        <div style="float: center; margin-left:15px;margin-top:5px; font-size: 25px;">
+          <i class="fa fa-plus-circle"></i>
+          <a href="{% url 'course_creation' %}">CREATE NEW COURSE</a>
+        </div>
+        <div style="float: center;margin-left:15px; font-size: 25px; margin-bottom: 5px;">
+          <i class="fa fa-plus-circle"></i>
+          <a href="{% url 'course_access' %}">JOIN A COURSE</a>
+        </div>
+        <div style="height: 600px; width: 350px; overflow: auto;">
+          {% for name, info in data.items %}
+          <div class="username" class="badge bg-primary text-wrap">
+            <center>
+              <a href="{% url 'courses_unique' name %}" class="user_button" class="btn btn-link" button type="button"
+                style="white-space: normal; color: black; width: 300px;">
+                {{name}}<br>
+                Completed: {{info.1}}% </button></a>
+              <br>
+            </center>
+          </div>
+          {% endfor %}
+        </div>
       </div>
-  </center>
-{% for name, info in data.items %}
-<div class="username" class="badge bg-primary text-wrap">
-  <center>
-    <a href="{% url 'courses_unique' name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
-        {{name}}<br> 
-        Completed: {{info.1}}% </button></a>
-    <br>
-  </center>
-</div>
-{% endfor %}
-</div>
-<div style = "float: right;padding-right: 50px; word-wrap: break-word;">
-  <center>
-    <div class="section" class="text-primary" style="margin-left:-25px;">
-  
-      <div class="text-primary" style="font-size: 100px;">
-        To-Do List
-      </div>
-  </center>
-{% for course , asgn in to_do_dead.items %}
-<div class="username" class="badge bg-primary text-wrap">
-  <center>
-  {% if asgn.2 %}
-  <a href="{% url 'assignment_download' asgn.3 asgn.0 %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
-      {{course}}:
-      Deadline: {{asgn.1}}</button></a>
-  <br>
-  {% else %}
-  <a href="{% url 'assignment_submission' asgn.3 asgn.0 %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
-    {{course}}:
-    Deadline: {{asgn.1}}</button></a>
-  <br>
-  {% endif %}
-</center>
+    </div>
+    <div class="col-sm">
+      <div style="float: right;padding-right: 50px; word-wrap: break-word;">
+        <center>
+          <div class="section" class="text-primary" style="margin-left:-25px;">
 
+            <div style="font-size: 60px; color: black;">
+              To-Do List
+            </div>
+        </center>
+        <div style="height: 600px; width: 350px; overflow: auto;">
+          {% for course , asgn in to_do_dead.items %}
+          <div class="username" class="badge bg-primary text-wrap">
+            <center>
+              {% if asgn.2 %}
+              <a href="{% url 'assignment_download' asgn.3 asgn.0 %}" class="user_button" class="btn btn-link" button
+                type="button" style="white-space: normal; color: black; width: 300px;">
+                {{course}}:
+                Deadline: {{asgn.1}}</button></a>
+              <br>
+              {% else %}
+              <a href="{% url 'assignment_submission' asgn.3 asgn.0 %}" class="user_button" class="btn btn-link" button
+                type="button" style="white-space: normal; color: black; width: 300px;">
+                {{course}}:
+                Deadline: {{asgn.1}}</button></a>
+              <br>
+              {% endif %}
+            </center>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-{% endfor %}
-</div>
+
+
+
 
 
 {% endblock %}

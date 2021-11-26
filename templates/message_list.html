@@ -3,20 +3,30 @@
 {% block title %}Message List{% endblock %}
 
 {% block content1 %}
-
-<form method="post">
-    {% csrf_token %}
+<div style="margin-left: 300px; margin-top: 50px;">
+    <h2>Chats</h2>
+    <form method="post">
+        {% csrf_token %}
+        <br>
+        <label style="font-size: 24px;">
+            <i class="fa fa-plus-circle"></i>
+            Enter new recepient : </label>
+        {{form.username}}
+        <input type="submit" value="Enter">
+    </form>
     <br>
-    {{form}}
-    <input type="submit" value="Submit">
-</form>
-<br>
-<ul>
-{% for person in list %}
-    <li><a href="{% url 'chat_screen' person %}">{{person}}</a></li>
-{% endfor %}
-</ul>
+    <div style="height: 600px; width: 350px; overflow: auto;">
+        <div class="container">
+            {% for person in list %}
+            <div class="row">
+                <a href="{% url 'chat_screen' person %}" class="user_button" class="btn btn-link" button type="button"
+                    style="white-space: normal; color: black; width: 300px;">{{person}}</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 
+</div>
 {% endblock %}
 
 {% block content2 %}

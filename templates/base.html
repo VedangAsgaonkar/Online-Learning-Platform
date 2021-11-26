@@ -10,21 +10,22 @@
   <title>{% block title %}{{ section.title }}{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'bootstrap-4.0.0-dist/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
 
   </style>
 </head>
 
-<body>
+<body style="background-color: rgb(216, 238, 230);">
 
   <a style="float:left;margin-left:20px;margin-top:10px;"><img src="{% static 'images/logo.png' %}" width="120"
       height="117"></a>
 
-  <div class="header">
+  <div class="header" style="background-color: #03dac6;">
     {% if user.is_authenticated %}
-    <div style="float: right; color: darkblue;"><img src="{% static 'images/profile_icon.png' %}" width="50"
-        height="50">
+    <div style="float: right; color: #3700b3;"><img src="{% static 'images/profile2.png' %}" width="50"
+        height="50" style="background-color: transparent;">
       <h3>{{user.username}}</h3>
     </div>
     {% endif %}
@@ -35,13 +36,13 @@
   <div class="topnav">
 
     {% if user.is_authenticated %}
-    <a href="{% url 'dashboard' %}">Home</a>
-    <a href="{% url 'profile' %}">Profile</a>
-    <a href="{% url 'settings' %}">Settings</a>
-    <a href="{% url 'message_list' %}">Direct Messaging</a>
-    <a href="{% url 'logout' %}">Logout</a>
+    <a href="{% url 'dashboard' %}"><i class="fa fa-home" style="font-size: 24px;"></i> Home</a>
+    <a href="{% url 'profile' %}"><i class="fa fa-user-circle" style="font-size: 24px;"></i> Profile</a> 	
+    <a href="{% url 'settings' %}"><i class="fa fa-gear" style="font-size: 24px;"></i> Settings</a>
+    <a href="{% url 'message_list' %}"><i class="fa fa-envelope" style="font-size: 24px;"></i> Messaging</a>
+    <a href="{% url 'logout' %}"><i class="fa fa-location-arrow" style="font-size: 24px;"></i> Logout</a> 
     {% else %}
-    <a href="{% url 'login' %}">Login</a>
+    <a href="{% url 'login' %}"><i class="fa fa-location-arrow" style="font-size: 24px;"></i> Login</a>
     {% endif %}
   </div>
   {% if user.is_authenticated %}

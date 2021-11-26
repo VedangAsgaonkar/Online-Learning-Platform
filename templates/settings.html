@@ -10,7 +10,12 @@
 <form method="post">
     {% csrf_token %}
     <label class="text-secondary">Edit your Profile Here (You may choose to leave some blanks empty)</label><br>
-    {{ form }}
+    <label>Institute name</label>
+    {{ form.institute_name }}
+    <br>
+    <label>Email id</label>
+    {{ form.email_id }}
+    <br>
     <input type="submit" value="Submit">
 </form>
 </div>
