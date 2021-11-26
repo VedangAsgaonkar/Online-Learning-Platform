@@ -6,7 +6,7 @@
 <center>
     <h1 class="text-primary" style="font-size: 100px;margin-left:105px;">{{course}}</h1>
 </center>
-<br>
+<!-- <br>
 <div style="float: left;">
     <a href="{% url 'assignment_creation' course %}" >Create Assignment</a>
     <br>
@@ -14,33 +14,107 @@
 
 </div>
 <br><br><br>
-<ul>
+<ul> -->
 
-    {% if teacher %}
-    {% for name,assignment in asgn_data.items %}
-    <li class="username" class="badge bg-primary text-wrap">
-        <a href="{% url 'assignment_download' course name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
-            {{name}}</button></a>Teacher
-        <br>
-    </li>
-    {% endfor %}
-    {% else %}
-    {% for name,assignment in asgn_data.items %}
-    <li class="username" class="badge bg-primary text-wrap">
-        <a href="{% url 'assignment_submission' course name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
-            {{name}}</button></a>
-        <br>
-    </li>
-    {% endfor %}
-    {% endif %}
-    
-    {% for name,content in content_data.items %}
-    <li class="username" class="badge bg-primary text-wrap">
-        <a href="{% url 'content_view' course name %}" class="user_button" class="btn btn-link" button type="button" style="white-space: normal;">
-            {{name}}</button></a>Teacher
-        <br>
-    </li>
-    {% endfor %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <div style="display: inline-block; padding-left: 50px;">
+                <center>
+                    <div class="section" class="text-primary" style="margin-left:-25px;">
+                        <div style="font-size: 60px; color: black;">
+                            Assignments
+                        </div>
+                    </div>
+                </center>
+                <div style="float: center; margin-left:15px;margin-top:5px; font-size: 25px; margin-bottom: 5px;">
+                    <i class="fa fa-plus-circle"></i>
+                    <a href="{% url 'assignment_creation' course %}">Create Assignment</a>
+                </div>
+                <div style="height: 600px; width: 350px; overflow: auto;">
+
+                    {% if teacher %}
+                    {% for name,assignment in asgn_data.items %}
+                    <div class="username" class="badge bg-primary text-wrap">
+                        <a href="{% url 'assignment_download' course name %}" class="user_button" class="btn btn-link"
+                            button type="button" style="white-space: normal; width: 300px;">
+                            {{name}}</button></a>
+                        <br>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    {% for name,assignment in asgn_data.items %}
+                    <div class="username" class="badge bg-primary text-wrap">
+                        <a href="{% url 'assignment_submission' course name %}" class="user_button" class="btn btn-link"
+                            button type="button" style="white-space: normal; width: 300px;">
+                            {{name}}</button></a>
+                        <br>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div style="float: right;padding-right: 50px; word-wrap: break-word;">
+                <center>
+                    <div class="section" class="text-primary" style="margin-left:-25px;">
+
+                        <div style="font-size: 60px; color: black;">
+                            Course Content
+                        </div>
+                </center>
+                <div style="float: center;margin-left:15px; font-size: 25px; margin-bottom: 5px;">
+                    <i class="fa fa-plus-circle"></i>
+                    <a href="{% url 'content_creation' course %}">Add Course Content</a>
+                </div>
+                <div style="height: 600px; width: 350px; overflow: auto;">
+                    {% for name,content in content_data.items %}
+                    <div class="username" class="badge bg-primary text-wrap">
+                        <a href="{% url 'content_view' course name %}" class="user_button" class="btn btn-link" button
+                            type="button" style="white-space: normal;  width: 300px;">
+                            {{name}}</button></a>
+                        <br>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 
+{% if teacher %}
+{% for name,assignment in asgn_data.items %}
+<li class="username" class="badge bg-primary text-wrap">
+    <a href="{% url 'assignment_download' course name %}" class="user_button" class="btn btn-link" button type="button"
+        style="white-space: normal;">
+        {{name}}</button></a>Teacher
+    <br>
+</li>
+{% endfor %}
+{% else %}
+{% for name,assignment in asgn_data.items %}
+<li class="username" class="badge bg-primary text-wrap">
+    <a href="{% url 'assignment_submission' course name %}" class="user_button" class="btn btn-link" button
+        type="button" style="white-space: normal;">
+        {{name}}</button></a>
+    <br>
+</li>
+{% endfor %}
+{% endif %}
+
+{% for name,content in content_data.items %}
+<li class="username" class="badge bg-primary text-wrap">
+    <a href="{% url 'content_view' course name %}" class="user_button" class="btn btn-link" button type="button"
+        style="white-space: normal;">
+        {{name}}</button></a>Teacher
+    <br>
+</li>
+{% endfor %} -->
 
 
 </ul>

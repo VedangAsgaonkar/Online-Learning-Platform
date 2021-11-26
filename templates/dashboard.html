@@ -38,7 +38,15 @@
               <a href="{% url 'courses_unique' name %}" class="user_button" class="btn btn-link" button type="button"
                 style="white-space: normal; color: black; width: 300px;">
                 {{name}}<br>
-                Completed: {{info.1}}% </button></a>
+                Course Progress:
+                <div class="progress">
+                  <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar"
+                    aria-valuenow="{{info.1}}" aria-valuemin="0" aria-valuemax="100" style="width: {{info.1}}%">
+                    {{info.1}}%
+                  </div>
+                </div>
+                </button>
+              </a>
               <br>
             </center>
           </div>

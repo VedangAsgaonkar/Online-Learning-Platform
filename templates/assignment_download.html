@@ -4,45 +4,51 @@
 {% block content1 %}
 <div style="margin-left: 2cm;">
 
-<div style="margin-top: 1cm;">
-    {{asgn|safe}}
-</div>
+    <div style="margin-top: 1cm;">
+        {{asgn|safe}}
+    </div>
 
 
-<hr>
+    <hr>
     <h3>Submissions</h3>
-<ul>
-    {% for sub in subs %}
-    <li>{{sub}}</li>
-    <a style="font-size: 2em;" href = "{% url 'GUI_grader' course_name name sub%}">Give feedback</a>
+    <ul>
+        {% for sub in subs %}
+        <li style="font-size: 20px;">{{sub}} :
+            <a style="font-size: 20px;" href="{% url 'GUI_grader' course_name name sub%}">Give feedback</a>
+        </li>
+        {% endfor %}
 
-    {% endfor %}
-   
+        <div style="margin-top: 1cm;">
+            <h3>Download all Submissions</h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="submit" value="Download">
+            </form>
+            <hr>
+            <div class="container" style="margin-left: 50px;">
+                <div class="col-sm">
+                    <i class="fa fa-calendar" style="font-size: 24px;"></i> <a style="font-size: 2em;" href="{% url 'feedback' course_name name %}">Give feedback as csv file</a>
+                </div>
+                <div class="col-sm">
+                    <i class="fa fa-thumbs-up" style="font-size: 24px;"></i> <a style="font-size: 2em;" href="{% url 'edit_deadline' course_name name %}">Change Deadline</a>
 
+                </div>
+            </div>
+        </div>
 
-<div style="margin-top: 1cm;">
-<h2>Download all Submissions</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="submit" value="Download">
-</form>
-<hr>
-<a style="font-size: 2em;" href = "{% url 'feedback' course_name name %}">Give feedback</a>
+        <hr>
+
+        {% if isgraded %}
+        <div style="margin-top: 2cm;">
+            <h3>Statistics</h3>
+            <span style="font-size: 1.5em;">mean = {{mean}} std = {{std}} <br>
+            </span>
+            {{plot|safe}}
+        </div>
+        {% endif %}
+
 </div>
 
-<hr>
-
-{% if isgraded %}
-<div style="margin-top: 2cm;">
-    <h3>Statistics</h3>
-    <span style="font-size: 1.5em;">mean = {{mean}} std = {{std}} <br>
-    </span>
-    {{plot|safe}}
-</div>
-{% endif %}
-</div>
-
-<a style="font-size: 2em;" href = "{% url 'edit_deadline' course_name name %}">Change Deadline</a>
 
 
 
