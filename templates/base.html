@@ -24,10 +24,12 @@
 
   <div class="header" style="background-color: #03dac6;">
     {% if user.is_authenticated %}
-    <div style="float: right; color: #3700b3;"><img src="{% static 'images/profile2.png' %}" width="50"
-        height="50" style="background-color: transparent;">
-      <h3>{{user.username}}</h3>
-    </div>
+    <a href="{% url 'profile' %}">
+      <div style="float: right; color: #3700b3;"><img src="{% static 'images/profile2.png' %}" width="50" height="50"
+          style="background-color: transparent;">
+        <h3>{{user.username}}</h3>
+      </div>
+    </a>
     {% endif %}
     <h1>Built by Team Bluefire</h1>
 
@@ -37,10 +39,10 @@
 
     {% if user.is_authenticated %}
     <a href="{% url 'dashboard' %}"><i class="fa fa-home" style="font-size: 24px;"></i> Home</a>
-    <a href="{% url 'profile' %}"><i class="fa fa-user-circle" style="font-size: 24px;"></i> Profile</a> 	
+    <a href="{% url 'profile' %}"><i class="fa fa-user-circle" style="font-size: 24px;"></i> Profile</a>
     <a href="{% url 'settings' %}"><i class="fa fa-gear" style="font-size: 24px;"></i> Settings</a>
     <a href="{% url 'message_list' %}"><i class="fa fa-envelope" style="font-size: 24px;"></i> Messaging</a>
-    <a href="{% url 'logout' %}"><i class="fa fa-location-arrow" style="font-size: 24px;"></i> Logout</a> 
+    <a href="{% url 'logout' %}"><i class="fa fa-location-arrow" style="font-size: 24px;"></i> Logout</a>
     {% else %}
     <a href="{% url 'login' %}"><i class="fa fa-location-arrow" style="font-size: 24px;"></i> Login</a>
     {% endif %}
