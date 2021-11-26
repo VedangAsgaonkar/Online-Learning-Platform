@@ -548,10 +548,10 @@ def announcements(request, course_name):
         teacher = False
     if(mod.Message.objects.filter(course=course)):
         for parent_post in mod.Message.objects.filter(course = course):
-                current_message = (parent_post.content, parent_post.id)
+                current_message = (parent_post.content, parent_post.id, parent_post.author, str(parent_post.time_of_last_edit)[:8])
                 announcement_dict[current_message] = []
                 for reply in mod.Replies.objects.filter(parent_message = parent_post):
-                    announcement_dict[current_message].append(reply.content)
+                    announcement_dict[current_message].append((reply.content, reply.author, str(reply.time_of_last_edit)[:8]))
     allowed = course.discussion_allowed
     return render(request,'announcements.html', {'data' : announcement_dict, 'course' : course_name, 'teacher':teacher, 'allowed':allowed})
 

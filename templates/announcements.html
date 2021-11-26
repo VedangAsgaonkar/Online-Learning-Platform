@@ -40,33 +40,43 @@
           <ol>
             {% for key,value in data.items %}
             <li>
-            <div style="height: 300px; width: 900px; overflow: auto;">
-            <div class="username" class="badge bg-primary text-wrap">
-                <div style="margin-left: 10px;">
-                  <div class="card" style="width: 600px;">
-                    <div class="card-body" style="background-color: rgb(161, 198, 221); font-size: 24px;">
-                      {{key.0|safe}}
+              <div style="height: 300px; width: 900px; overflow: auto;">
+                <div class="username" class="badge bg-primary text-wrap">
+                  <div style="margin-left: 10px;">
+                    <div class="card" style="width: 600px;">
+                      <div class="card-body" style="background-color: rgb(161, 198, 221); font-size: 24px;">
+                        {{key.0|safe}}
+                      </div>
+                      <div class="card-link"
+                        style="background-color: rgba(161, 198, 221, 0.794); color: rgb(87, 85, 85);">
+                        {{key.2|safe}}
+                        {{key.3|safe}}
+                      </div>
                     </div>
                   </div>
-                </div>
                   {% for reply in value %}
-                <div style="margin-left: 10px;">
-                  <div class="card" style="width: 300px; font-size: 20px;">
-                    <div class="card-body">
-                      {{reply|safe}}
+                  <div style="margin-left: 10px;">
+                    <div class="card" style="width: 500px; font-size: 20px;">
+                      <div class="card-body">
+                        {{reply.0|safe}}
+                      </div>
+                      <div class="card-link" style="background-color: whitesmoke ; color: rgb(87, 85, 85); font-size: 18px;">
+                        {{reply.1|safe}}
+                        {{reply.2|safe}}
+                      </div>
                     </div>
                   </div>
+                  {% endfor %}
+                  {% if allowed %}
+                  <div style="font-size: 24px;"><i class="fa fa-send"></i> <a
+                      href="{% url 'announcements_reply' course key.1 %}"> Reply to this </a></div>
+                  {% endif %}
+                  <br>
+                  <br>
                 </div>
-                {% endfor %}
-                {% if allowed %}
-                  <div style="font-size: 24px;"><i class="fa fa-send"></i>  <a href="{% url 'announcements_reply' course key.1 %}"> Reply to this </a></div>
-                {% endif %}
-                <br>
-                <br>
-            </div>
-            </div>
-            <br>
-           </li>
+              </div>
+              <br>
+            </li>
             {% endfor %}
           </ol>
         </div>
