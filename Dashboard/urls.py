@@ -8,6 +8,7 @@ urlpatterns=[
     path("",views.index,name="dashboard"),
     path("courses/",views.courses,name="courses"),
     path("courses/<str:input_course_name>", views.courses, name="courses_unique"),
+    path("courses/<str:course_name>/participants/", views.participants, name="participants"),
     path("course_creation/",views.course_creation,name="course_creation"),
     path("course_access/",views.course_access , name = "course_access"),
     path("courses/<str:course_name>/announcements/", views.announcements,name="announcements"),

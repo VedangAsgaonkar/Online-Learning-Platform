@@ -557,6 +557,13 @@ def announcements_reply(request, course_name, id):
         form = forms.ReplyCreationForm()
         return render(request,'announcements_new.html',{'form':form})
 
+def participants(request, course_name):
+    course = mod.Courses.objects.get(course_name = course_name)
+    members = []
+    for mem in mod.Enrollment.objects.filter(course = course):
+        members.append(mem.profile.user)
+    return render(request,'participants.html',{'participants':members, 'course':course_name})
+
 def grades(request, course_name):
     enrollment = mod.Enrollment.objects.get(profile=mod.Profile.objects.get(user = request.user), course=mod.Courses.objects.get(course_name = course_name))
     course =mod.Courses.objects.get(course_name = course_name)

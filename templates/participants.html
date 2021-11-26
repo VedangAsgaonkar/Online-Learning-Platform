@@ -1,0 +1,29 @@
+<!-- templates/profile.html-->
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+
+{% block content1 %}
+
+<center>
+    <h1 class="text-primary" style="font-size: 70px;">Welcome to {{ course }} !</h1>
+    <h2> Participants</h2>
+</center>
+
+<div style="font-size: 25px; margin-left: 2cm;">
+    <ul>
+        {% for part in participants %}
+            <li>{{part}}</li>
+        {% endfor %}
+    </ul>
+    <br><br>
+</div>
+
+
+
+{% endblock %}
+
+{% block content2 %}
+<center>
+    <h1><a href="{% url 'login' %}">Please Login</a></h1>
+</center>
+{% endblock %}
