@@ -5,73 +5,137 @@
 {% block content1 %}
 
 <center>
-    <h1 class="text-primary" style="font-size: 100px;">{{course}}</h1>
+  <h1 class="text-primary" style="font-size: 100px;">{{course}}</h1>
 </center>
 <ul>
-    {% if allowed %}
-
-    <div style="float: right;">
-        <a href="{% url 'announcements_create' course %}">Create Announcement</a>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <div style="display: inline-block; padding-left: 50px;">
+          <center>
+            <div class="section" class="text-primary" style="margin-left:-25px;">
+              <div style="font-size: 60px; color: black;">
+                Announcements
+              </div>
+            </div>
+          </center>
+          {% if allowed %}
+          <div style="float: center; margin-left:15px;margin-top:5px; font-size: 25px;">
+            <i class="fa fa-plus-circle"></i>
+            <a href="{% url 'announcements_create' course %}">Create Announcement</a>
+          </div>
+          {% endif %}
+          {% if teacher %}
+          <div style="float: center; margin-left:15px;margin-top:5px; font-size: 25px;">
+            <i class="fa fa-plus-circle"></i>
+            {% if allowed %}
+            <a href="{% url 'stop_announcements' course %}" style="white-space: normal;">
+              Stop Announcements</a>
+            {% else %}
+            <a href="{% url 'start_announcements' course %}" style="white-space: normal;">
+              Resume Announcements</a>
+            {% endif %}
+          </div>
+          {% endif %}
+          <div style="height: 600px; width: 350px; overflow: auto;">
+            {% for key,value in data.items %}
+            <div class="username" class="badge bg-primary text-wrap">
+              <center>
+                <div style="margin-left: 300px;">
+                  <div class="card" style="width: 300px;">
+                      <div class="card-body" style="background-color: rgb(161, 198, 221);">
+                        {{key.0|safe}}
+                      </div>
+                  </div>
+              </div>
+                <br>
+                <ul>
+                  {% for reply in value %}
+                  <div class="username" class="badge bg-primary text-wrap">
+                    {{reply|safe}}
+                  </div>
+                  {% endfor %}
+                </ul>
+                {% if allowed %}
+                <a href="{% url 'announcements_reply' course key.1 %}" class="user_button" class="btn btn-link" button
+                  type="button" style="white-space: normal;">
+                  Reply to this</a>
+                {% endif %}
+                <br>
+                <br>
+              </center>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- {% if allowed %}
+
+  <div style="float: right;">
+    <a href="{% url 'announcements_create' course %}">Create Announcement</a>
+  </div>
+  {% endif %}
+
+  <br>
+  <br>
+  <ul>
+    {% if teacher %}
+    {% if allowed %}
+    <a href="{% url 'stop_announcements' course %}" class="user_button" class="btn btn-link" button type="button"
+      style="white-space: normal;">
+      Stop Announcements</a>
+    {% else %}
+    <a href="{% url 'start_announcements' course %}" class="user_button" class="btn btn-link" button type="button"
+      style="white-space: normal;">
+      Resume Announcements</a>
     {% endif %}
 
-    <br>
-    <br>
-    <ul>
-        {% if teacher %}
-        {% if allowed %}
-        <a href="{% url 'stop_announcements' course %}" class="user_button" class="btn btn-link" button type="button"
-            style="white-space: normal;">
-            Stop Announcements</a>
-        {% else %}
-        <a href="{% url 'start_announcements' course %}" class="user_button" class="btn btn-link" button type="button"
-            style="white-space: normal;">
-            Resume Announcements</a>
-        {% endif %}
-
-        {% for key,value in data.items %}
-        <li class="username" class="badge bg-primary text-wrap">
-            {{key.0|safe}}
-            <br>
-            <ul>
-                {% for reply in value %}
-                {{reply|safe}}
-                {% endfor %}
-            </ul>
-            {% if allowed %}
-
-            <a href="{% url 'announcements_reply' course key.1 %}" class="user_button" class="btn btn-link" button
-                type="button" style="white-space: normal;">
-                Reply to this</a>
-            <br>
-            {% endif %}
-
-        </li>
+    {% for key,value in data.items %}
+    <li class="username" class="badge bg-primary text-wrap">
+      {{key.0|safe}}
+      <br>
+      <ul>
+        {% for reply in value %}
+        {{reply|safe}}
         {% endfor %}
-        {% else %}
-        {% for key,value in data.items %}
-        <li class="username" class="badge bg-primary text-wrap">
-            {{key.0|safe}}
-            <br>
-            <ul>
-                {% for reply in value %}
-                {{reply|safe}}
-                {% endfor %}
-            </ul>
-            <a href="{% url 'announcements_reply' course key.1 %}" class="user_button" class="btn btn-link" button
-                type="button" style="white-space: normal;">
-                Reply to this</a>
-            <br>
-        </li>
+      </ul>
+      {% if allowed %}
+
+      <a href="{% url 'announcements_reply' course key.1 %}" class="user_button" class="btn btn-link" button
+        type="button" style="white-space: normal;">
+        Reply to this</a>
+      <br>
+      {% endif %}
+
+    </li>
+    {% endfor %}
+    {% else %}
+    {% for key,value in data.items %}
+    <li class="username" class="badge bg-primary text-wrap">
+      {{key.0|safe}}
+      <br>
+      <ul>
+        {% for reply in value %}
+        {{reply|safe}}
         {% endfor %}
-        {% endif %}
+      </ul>
+      <a href="{% url 'announcements_reply' course key.1 %}" class="user_button" class="btn btn-link" button
+        type="button" style="white-space: normal;">
+        Reply to this</a>
+      <br>
+    </li>
+    {% endfor %}
+    {% endif %}
 
-    </ul>
-    <br><br><br>
-    {% endblock %}
+  </ul>
+  <br><br><br>
+  {% endblock %}
 
-    {% block content2 %}
-    <center>
-        <h1><a href="{% url 'login' %}">Please Login</a></h1>
-    </center>
-    {% endblock %}
+  {% block content2 %}
+  <center>
+    <h1><a href="{% url 'login' %}">Please Login</a></h1>
+  </center> -->
+  {% endblock %}
