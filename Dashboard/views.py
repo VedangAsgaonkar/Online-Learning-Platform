@@ -493,7 +493,8 @@ def course_stats(request, course_name):
         # print(grades)
         assignment_names.append(assignment.name)
         assignment_grades.append(grades)
-        assignment_stats_dict[assignment.name] = "Mean : " + str(np.mean(grades)) + " Std : " + str(np.std(grades))
+        if len(grades) !=0 :
+            assignment_stats_dict[assignment.name] = "Mean : " + str(np.mean(grades)) + " Std : " + str(np.std(grades))
         chart = create_boxchart(assignment_grades, assignment_names)
         # print(chart,'chart')
         # print(assignment_stats_dict)
@@ -562,9 +563,14 @@ def announcements_reply(request, course_name, id):
 
 def participants(request, course_name):
     course = mod.Courses.objects.get(course_name = course_name)
-    members = []
+    members = {}
     for mem in mod.Enrollment.objects.filter(course = course):
-        members.append(mem.profile.user)
+        if mem.isTeacher : 
+            members[mem.profile.user] = 'Teacher'
+        elif mem.isAssistant:
+            members[mem.profile.user] = 'Teaching Assistant'
+        else:
+            members[mem.profile.user] = 'Student'
     return render(request,'participants.html',{'participants':members, 'course':course_name})
 
 def grades(request, course_name):
