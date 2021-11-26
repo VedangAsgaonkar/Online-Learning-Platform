@@ -30,12 +30,14 @@
         </button></a>
         <br>
     </div>
+    {% if not isTeacher %}
     <div class="row">
         <a href="{% url 'grades' name %}" class="user_button" class="btn btn-link" button type="button"
             style="white-space: normal; color: black; width: 300px;">
             Grades</button></a>
         <br>
     </div>
+    {% endif %}
     {% if isTeacher %}
     <div class="row">
         <a href="{% url 'course_email' name %}" class="user_button" class="btn btn-link" button type="button"
