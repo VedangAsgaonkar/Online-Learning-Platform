@@ -786,7 +786,52 @@ def add_course(request, sample_input):
 
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([AllowAny]) 
+def rest_courses(request):
+    if rest_login(request):
+        profile = mod.Profile.objects.get(user = request.data.get("username"))
+        courses_list = []
+        for course in profile.courses.all():
+            courses_list.append(course.course_name)
+        Res = {'courses' : courses_list}
+        return Response(Res)
+    else:
+        raise ValidationError({"400": f'Some Problem'})
+
+@api_view(["POST"])
+@permission_classes([AllowAny]) 
+def rest_todolist(request):
+    if rest_login(request):
+        profile = mod.Profile.objects.get(user = request.data.get("username"))
+        asgn_remaining_dict1= {}
+        for course in profile.courses.all():
+            enrollment = mod.Enrollment.objects.get(profile = profile, course = course)
+            for assignment in mod.Assignments.objects.filter(course = course):
+                try:
+                    x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
+                    if not x.isCompleted and assignment.deadline != None:
+                        course_var = course.course_name + ": " + assignment.name
+                        if enrollment.isTeacher:
+                            asgn_remaining_dict1[course_var] = [assignment.name ,assignment.deadline, course.course_name]
+                        elif enrollment.isAssistant and course.assistant_grading_privilege:
+                            asgn_remaining_dict1[course_var] = [assignment.name ,assignment.deadline, course.course_name]
+                        elif not enrollment.isAssistant:
+                            asgn_remaining_dict1[course_var] = [assignment.name ,assignment.deadline, course.course_name]
+                except Exception as e:
+                    print(e)
+        Res = {'todo' : asgn_remaining_dict1}
+        return Response(Res)
+    else:
+        raise ValidationError({"400": f'Some Problem'})
+
+
+'''
+assignment submission - Prats
+assignment download - SG
+csv feedback upload - Vedang
+individual feedback upload
+'''
+
 def rest_login(request):
     data = {}
     # reqBody = json.loads(request.body)
@@ -805,30 +850,22 @@ def rest_login(request):
         if Account.is_active:
             login(request, Account)
             request.session.save()
-            data["message"] = "user logged in"
-            data["email_address"] = Account.username
-            profile = mod.Profile.objects.get(user = username)
-            courses_list = []
-            for course in profile.courses.all():
-                courses_list.append(course.course_name)
-            Res = {"data": data, "token": token, 'courses' : courses_list}
-
-            return Response(Res)
-
+            return True
         else:
-            raise ValidationError({"400": f'Account not active'})
+            return False
 
     else:
-        raise ValidationError({"400": f'Account doesnt exist'})
+        return False
 
 
-@api_view(['GET'])
-def rest_courses(request):
-    if request.method == 'GET':
-        print(request.user)
-        return Response(str(request.user))
-    else :
-        return Response('SG')
+
+# @api_view(['GET'])
+# def rest_courses(request):
+#     if request.method == 'GET':
+#         print(request.user)
+#         return Response(str(request.user))
+#     else :
+#         return Response('SG')
 
 
 
