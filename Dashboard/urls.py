@@ -40,5 +40,6 @@ urlpatterns=[
     re_path(r'^refresh-token/', refresh_jwt_token),
     path('rest/courses/', views.rest_courses, name='rest_courses'),
     path('rest/todo/', views.rest_todolist, name='rest_todolist'),
+    path('rest/feedback/', views.rest_feedback, name='rest_todolist'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

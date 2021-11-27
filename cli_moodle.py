@@ -23,6 +23,16 @@ while True:
                 i+=1
         except Exception as e:
             print("Error- ", e)
+    if (cmd =='feedback'):
+        try:
+            file_name = input('Enter file name- ')
+            course_name = input('Enter course name- ')
+            asgn_name = input('Enter assignment name- ')
+            files = {'upload_file': ('grades.csv', open(file_name,'rb'), 'text/csv')}
+            response = requests.post('http://127.0.0.1:8000/rest/feedback/', data = {'username':'Teacher1', 'password':'BlueFire', 'course_name' : course_name, 'asgn_name' : asgn_name }, files=files)
+            print(response.json())
+        except Exception as e:
+            print("Error-",e)
     elif (cmd=='exit'):
         break
     else:

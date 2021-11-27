@@ -825,6 +825,45 @@ def rest_todolist(request):
         raise ValidationError({"400": f'Some Problem'})
 
 
+@api_view(["POST"])
+@permission_classes([AllowAny]) 
+def rest_feedback(request):
+    if rest_login(request):
+        profile = mod.Profile.objects.get(user = request.data.get("username"))
+        ds = pd.read_csv(request.FILES.getlist('upload_file')[0])
+        id_set = set()
+        course_name = request.data.get('course_name')
+        asgn_name = request.data.get('asgn_name')
+        assignment = mod.Assignments.objects.get(course = course_name , name = asgn_name)
+        assignment_files = mod.AssignmentFiles.objects.filter(assignment = assignment)
+        for i in ds.index:
+                    for assignment_profile in assignment_files.filter(profile = mod.Profile.objects.get(user = ds['name'][i])):
+                        assignment_profile.feedback = ds['feedback'][i]
+                        assignment_profile.grade = ds['grade'][i]
+                        assignment_profile.marks = ds['marks'][i]
+                        assignment_profile.save()
+                    id_set.add( mod.Profile.objects.get(user = ds['name'][i]).email_id )
+        allCorrected = True
+        for enrollment in mod.Enrollment.objects.filter(course = mod.Courses.objects.get(course_name = course_name), isTeacher = False) :
+                    allCorrected = allCorrected and mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment).isCompleted
+                    if not allCorrected :
+                        break
+        if allCorrected :
+                    for enrollment in mod.Enrollment.objects.filter(course = mod.Courses.objects.get(course_name = course_name), isTeacher = True) : 
+                        x = mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment)
+                        x.isCompleted = True
+                        x.save()
+        id_list = list(id_set)
+        subject = "Feedback for assignment " + name + " in course " + course_name
+        message = "View Feedback on BlueFire moodle"
+        t7 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, None ))  
+        t7.start()
+        Res = 'Success'
+        return Response(Res)
+    else:
+        raise ValidationError({"400": f'Some Problem'})
+    
+
 '''
 assignment submission - Prats
 assignment download - SG
