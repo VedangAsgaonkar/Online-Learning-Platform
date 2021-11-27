@@ -7,14 +7,16 @@
 <center>
     <h1 class="text-primary" style="font-size: 100px;">COURSE {{course_name}}</h1>
 </center>
+<div style="margin-left: 300px;">
 <ul>
 {% for key, value in assignment_dict.items %}
-<li>{{key}} : {{value}}</li>
+<li style="font-size: 24px;">{{key}} : <span style="color: brown;">{{value}}</span></li>
 {% endfor %}
 
 </ul>
 
 {{chart|safe}}
+</div>
 
 {% endblock %}
 
