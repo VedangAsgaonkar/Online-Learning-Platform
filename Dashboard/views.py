@@ -907,6 +907,28 @@ def rest_feedback(request):
     else:
         raise ValidationError({"400": f'Some Problem'})
     
+@api_view(["POST"])
+@permission_classes([AllowAny]) 
+def rest_assignment_download(request):
+    course_name = request.data.get('course_name')
+    asgn_name = request.data.get('asgn_name')
+    username = request.data.get('username')
+    profile = mod.Profile.objects.get(user = username)
+    enrollment = mod.Enrollment.objects.get(profile = profile, course = course_name)
+    if enrollment.isTeacher or (enrollment.isAssistant and mod.Courses.objects.get(course_name=course_name).assistant_grading_privilege):
+        fl_path = 'files/' + course_name + '/' + asgn_name
+        if os.path.isdir(fl_path):
+            output_filename = 'zipped/zip'
+            shutil.make_archive(output_filename, 'zip', fl_path)
+            zip_file = open(output_filename+'.zip', 'rb')
+            return FileResponse(zip_file, filename=course_name+'_'+name+'_submissions.zip')
+        else:
+            Res = 'No submission is present'
+            return Response(Res)
+
+    else:
+        Res = 'You do not have access to this command'
+        return Response(Res)
 
 '''
 assignment submission - Prats

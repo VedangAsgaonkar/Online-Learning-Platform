@@ -42,5 +42,6 @@ urlpatterns=[
     path('rest/todo/', views.rest_todolist, name='rest_todolist'),
     path('rest/feedback/', views.rest_feedback, name='rest_todolist'),
     path('rest/submit_assignment/', views.rest_submit_assignment, name='rest_submit_assignment'),
+    path('rest/assignment_download/', views.rest_assignment_download, name='rest_assignment_download'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
