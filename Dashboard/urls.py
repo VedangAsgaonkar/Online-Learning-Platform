@@ -38,6 +38,7 @@ urlpatterns=[
     re_path(r'^rest-auth/', include('rest_auth.urls')),
     re_path(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
     re_path(r'^refresh-token/', refresh_jwt_token),
+    path('rest/login/', views.rest_login, name='rest_login'),
     path('rest/courses/', views.rest_courses, name='rest_courses'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

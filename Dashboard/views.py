@@ -1,13 +1,15 @@
 from os import name
 import shutil
 import os
+from django.core.exceptions import ValidationError
 from django.http.response import FileResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.http import HttpRequest, request
 from pandas.core.indexing import convert_to_index_sliceable
 import requests
+import json
 from requests.exceptions import HTTPError
-from django.contrib.auth import models, update_session_auth_hash
+from django.contrib.auth import login, models, update_session_auth_hash
 from django.contrib.auth.models import User
 import datetime
 import pytz
@@ -25,8 +27,10 @@ import numpy as np
 from io import StringIO
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
 
 
 utc=pytz.timezone('Asia/Kolkata')
@@ -761,6 +765,61 @@ def add_course(request, sample_input):
         "course":course1.profile_set.all(),
     }
     return render(request, 'courses.html', data)
+
+
+# @csrf_exempt
+# @api_view(["POST", "GET"])
+# @permission_classes((AllowAny,))
+# def login(request):
+#     username = request.data.get("username")
+#     password = request.data.get("password")
+#     if username is None or password is None:
+#         return Response({'error': 'Please provide both username and password'},
+#                         status=HTTP_400_BAD_REQUEST)
+#     user = authenticate(username=username, password=password)
+#     if not user:
+#         return Response({'error': 'Invalid Credentials'},
+#                         status=HTTP_404_NOT_FOUND)
+#     request.session.save()
+#     return Response({'Success': 'Logged in'},
+#                     status=HTTP_200_OK)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def rest_login(request):
+    data = {}
+    # reqBody = json.loads(request.body)
+    print(request)
+    username = request.data.get("username")
+    password = request.data.get('password')
+    try:
+        Account = User.objects.get(username=username)
+    except BaseException as e:
+        raise ValidationError({"400": f'{str(e)}'})
+    token = Token.objects.get_or_create(user=Account)[0].key
+    print(token)
+    if not Account.check_password(password):
+        raise ValidationError({"message": "Incorrect Login credentials"})
+    if Account:
+        if Account.is_active:
+            login(request, Account)
+            request.session.save()
+            data["message"] = "user logged in"
+            data["email_address"] = Account.username
+            profile = mod.Profile.objects.get(user = username)
+            courses_list = []
+            for course in profile.courses.all():
+                courses_list.append(course.course_name)
+            Res = {"data": data, "token": token, 'courses' : courses_list}
+
+            return Response(Res)
+
+        else:
+            raise ValidationError({"400": f'Account not active'})
+
+    else:
+        raise ValidationError({"400": f'Account doesnt exist'})
 
 
 @api_view(['GET'])
