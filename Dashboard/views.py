@@ -153,10 +153,15 @@ def assignment_submission(request, course_name ,name):
             assigncomplete = mod.AssignmentCompleted.objects.get(enrollment = enrollment , assignment =  assignment)
             if mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)):
                 asgn_file = mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)).first()
-                return render(request, 'assignment_submission.html', {'form' : form, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade, 'asgn_marks': asgn_file.marks,'isCompleted' : assigncomplete.isCompleted,'asgn_deadline' : assignment.deadline})
+                return render(request, 'assignment_submission.html', {'form' : form,'exists':True, 'asgn' : asgn_desc, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade, 'asgn_marks': asgn_file.marks,'isCompleted' : assigncomplete.isCompleted,'asgn_deadline' : assignment.deadline})
                 # change form above to editable assignment submission
             return render(request, 'assignment_submission.html', {'form' : form,'exists':True ,'asgn_name' : assignment.name, 'asgn' : asgn_desc, 'asgn_feedback': "Submit File for feedback ",'asgn_grade': "Not graded yet",'asgn_marks' : "NULL", 'asgn_deadline' : assignment.deadline} )
         else :
+            assignment = mod.Assignments.objects.get(course = course_name, name=name)
+            assigncomplete = mod.AssignmentCompleted.objects.get(enrollment = enrollment , assignment =  assignment)
+            if mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)):
+                asgn_file = mod.AssignmentFiles.objects.filter(assignment = mod.Assignments.objects.get(course = course_name , name = name), profile = mod.Profile.objects.get(user = request.user)).first()
+                return render(request, 'assignment_submission.html', {'exists':False, 'asgn' : assignment.description, 'asgn_feedback': asgn_file.feedback,'asgn_grade': asgn_file.grade, 'asgn_marks': asgn_file.marks,'isCompleted' : assigncomplete.isCompleted,'asgn_deadline' : assignment.deadline})
             return render(request, 'assignment_submission.html', {'exists':False, 'asgn_name' : assignment.name, 'asgn' : assignment.description, 'asgn_feedback': "Late",'asgn_grade': "Late",'asgn_marks' : "NULL", 'asgn_deadline' : assignment.deadline} )
 
 def create_barchart(x_data):
