@@ -24,6 +24,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from io import StringIO
 from django.utils import timezone
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 
 utc=pytz.timezone('Asia/Kolkata')
 
@@ -758,6 +762,14 @@ def add_course(request, sample_input):
     }
     return render(request, 'courses.html', data)
 
+
+@api_view(['GET'])
+def rest_courses(request):
+    if request.method == 'GET':
+        print(request.user)
+        return Response(str(request.user))
+    else :
+        return Response('SG')
 
 
 

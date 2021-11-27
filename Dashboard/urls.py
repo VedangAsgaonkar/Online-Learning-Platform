@@ -1,8 +1,10 @@
-from django.urls import path
+from os import name
+from django.urls import path, re_path, include
 from . import views
 from django.views.generic.base import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework_jwt.views import refresh_jwt_token
 
 urlpatterns=[
     path("",views.index,name="dashboard"),
@@ -33,10 +35,9 @@ urlpatterns=[
     path("courses/<str:course_name>/assignments/<str:name>/edit_properties/edit_deadline/",views.edit_deadline, name = "edit_deadline"),
     path("courses/<str:course_name>/assignments/<str:name>/assignment_feedback/",views.assignment_feedback, name = "feedback"),
     path("courses/<str:course_name>/assignments/<str:name>/<str:student_name>/",views.GUI_grader, name = "GUI_grader"),
-
-
-
-
-
+    re_path(r'^rest-auth/', include('rest_auth.urls')),
+    re_path(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
+    re_path(r'^refresh-token/', refresh_jwt_token),
+    path('rest/courses/', views.rest_courses, name='rest_courses'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
