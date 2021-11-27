@@ -9,19 +9,15 @@ while True:
     if (cmd =='courses'):
         response = requests.post('http://127.0.0.1:8000/rest/courses/', data = {'username':username, 'password':password})
         try:
-            i=1
-            for course in response.json()['courses']:
-                print(i, course)
-                i+=1
+            for i,course in enumerate(response.json()['courses']):
+                print(i+1, course)
         except Exception as e:
             print("Error- ", e)
     elif (cmd =='todo'):
         try:
             response = requests.post('http://127.0.0.1:8000/rest/todo/', data = {'username':username, 'password':password})
-            i=1
-            for task in response.json()['todo']:
-                print(i,task)
-                i+=1
+            for i,task in enumerate(response.json()['todo']):
+                print(i+1,task)
         except Exception as e:
             print("Error- ", e)
     elif (cmd =='feedback'):
@@ -34,7 +30,7 @@ while True:
             print(response.json())
         except Exception as e:
             print("Error-",e)
-    if (cmd =='submit_assignment'):
+    elif (cmd =='submit_assignment'):
         try:
             files = []
             num_files = int(input('Numer of files to be uploaded- '))
