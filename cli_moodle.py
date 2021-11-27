@@ -3,12 +3,14 @@ from colorama import init, Fore, Back, Style
 import os
 init()
 
+HOST = 'http://127.0.0.1:8000'
+
 username = input(Fore.YELLOW+'Please Enter Username- ' + Style.RESET_ALL)
 password = input(Fore.YELLOW+'Please Enter Password- ' + Style.RESET_ALL)
 while True:
     cmd = input(Fore.CYAN +'BlueFire ' + Fore.MAGENTA+'$ ' + Style.RESET_ALL)
     if (cmd =='courses'):
-        response = requests.post('http://127.0.0.1:8000/rest/courses/', data = {'username':username, 'password':password})
+        response = requests.post(HOST+'/rest/courses/', data = {'username':username, 'password':password})
         try:
             for i,course in enumerate(response.json()['courses']):
                 print(i+1, course)
@@ -16,7 +18,7 @@ while True:
             print("Error- ", e)
     elif (cmd =='todo'):
         try:
-            response = requests.post('http://127.0.0.1:8000/rest/todo/', data = {'username':username, 'password':password})
+            response = requests.post(HOST+'/rest/todo/', data = {'username':username, 'password':password})
             for i,task in enumerate(response.json()['todo']):
                 print(i+1,task)
         except Exception as e:
@@ -27,21 +29,21 @@ while True:
             course_name = input(Fore.YELLOW+'Enter course name- '+ Style.RESET_ALL)
             asgn_name = input(Fore.YELLOW+'Enter assignment name- '+ Style.RESET_ALL)
             files = {'upload_file': ('grades.csv', open(file_name,'rb'), 'text/csv')}
-            response = requests.post('http://127.0.0.1:8000/rest/feedback/', data = {'username':username, 'password':password, 'course_name' : course_name, 'asgn_name' : asgn_name }, files=files)
+            response = requests.post(HOST+'/rest/feedback/', data = {'username':username, 'password':password, 'course_name' : course_name, 'asgn_name' : asgn_name }, files=files)
             print(response.json())
         except Exception as e:
             print("Error-",e)
     elif (cmd =='submit_assignment'):
         try:
             files = []
-            num_files = int(input('Numer of files to be uploaded- '))
+            num_files = int(input(Fore.YELLOW+'Numer of files to be uploaded- '+ Style.RESET_ALL))
             for i in range(num_files):
-                file_name = input('Enter file name- ')
+                file_name = input(Fore.YELLOW+'Enter file name- '+ Style.RESET_ALL)
                 files.append(('file' ,open(file_name , 'rb') ))
 
-            course_name = input('Enter course name- ')
-            asgn_name = input('Enter assignment name- ')
-            response = requests.post('http://127.0.0.1:8000/rest/submit_assignment/', data = {'username':username, 'password':password, 'course_name' : course_name, 'asgn_name' : asgn_name }, files=files)
+            course_name = input(Fore.YELLOW+'Enter course name- '+ Style.RESET_ALL)
+            asgn_name = input(Fore.YELLOW+'Enter assignment name- '+ Style.RESET_ALL)
+            response = requests.post(HOST+'/rest/submit_assignment/', data = {'username':username, 'password':password, 'course_name' : course_name, 'asgn_name' : asgn_name }, files=files)
             print(response.json())
         except Exception as e:
             print("Error-",e)
@@ -49,7 +51,7 @@ while True:
         try:
             course_name = input(Fore.YELLOW+'Enter course name- '+ Style.RESET_ALL)
             asgn_name = input(Fore.YELLOW+'Enter assignment name- '+ Style.RESET_ALL)
-            response = requests.post('http://127.0.0.1:8000/rest/assignment_download/', data = {'username':username, 'password':password, 'course_name' : course_name, 'asgn_name' : asgn_name })
+            response = requests.post(HOST+'/rest/assignment_download/', data = {'username':username, 'password':password, 'course_name' : course_name, 'asgn_name' : asgn_name })
             with open(""+course_name+"- "+asgn_name+" submissions.zip", 'wb') as file:
                 file.write(response.content)
             print("Success")

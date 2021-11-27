@@ -930,13 +930,6 @@ def rest_assignment_download(request):
         Res = 'You do not have access to this command'
         return Response(Res)
 
-'''
-assignment submission - Prats
-assignment download - SG
-csv feedback upload - Vedang
-individual feedback upload
-'''
-
 def rest_login(request):
     data = {}
     # reqBody = json.loads(request.body)
