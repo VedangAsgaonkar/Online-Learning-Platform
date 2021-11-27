@@ -810,23 +810,26 @@ def rest_submit_assignment(request):
         user_name = request.data.get("username")
         profile = mod.Profile.objects.get(user = user_name)
         course_name = request.data.get('course_name')
-        asgn_name = request.data.get('asgn_name')
-        assignment = mod.Assignments.objects.get(course = course_name , name = asgn_name)
-        for file in request.FILES.getlist('file'):
-                file_name = course_name+'/'+name+'/'+ user_name
-                file1 = mod.AssignmentFiles(assignment=assignment, file_name = file_name ,file=file, profile = profile)
-                file1.save()
-        id_list = [profile.email_id]
-        subject = "Assignment submission for " + name + " in course " + course_name
-        message = "Successfully submitted assignment " + name + " in course " + course_name
-        t3 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, None ))  
-        t3.start()
-        enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = mod.Courses.objects.get(course_name = course_name))
-        assigncomplete = mod.AssignmentCompleted.objects.get(enrollment = enrollment , assignment =  assignment)
-        assigncomplete.isCompleted = True
-        assigncomplete.save()
-        Res = {'Assignment'+asgn_name: "Done"}
-        return Response(Res)
+        if mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user = user_name), course = mod.Courses.objects.get(course_name = course_name)):
+            asgn_name = request.data.get('asgn_name')
+            assignment = mod.Assignments.objects.get(course = course_name , name = asgn_name)
+            for file in request.FILES.getlist('file'):
+                    file_name = course_name+'/'+asgn_name+'/'+ user_name
+                    file1 = mod.AssignmentFiles(assignment=assignment, file_name = file_name ,file=file, profile = profile)
+                    file1.save()
+            id_list = [profile.email_id]
+            subject = "Assignment submission for " + asgn_name + " in course " + course_name
+            message = "Successfully submitted assignment " + asgn_name + " in course " + course_name
+            t3 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, None ))  
+            t3.start()
+            enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = mod.Courses.objects.get(course_name = course_name))
+            assigncomplete = mod.AssignmentCompleted.objects.get(enrollment = enrollment , assignment =  assignment)
+            assigncomplete.isCompleted = True
+            assigncomplete.save()
+            Res = {'Assignment'+asgn_name: "Done"}
+            return Response(Res)
+        else:
+            return Response('Error')
     else:
         raise ValidationError({"400": f'Some Problem'})
 
@@ -865,7 +868,16 @@ def rest_feedback(request):
         ds = pd.read_csv(request.FILES.getlist('upload_file')[0])
         id_set = set()
         course_name = request.data.get('course_name')
+        course = mod.Courses.objects.get(course_name = course_name)
         asgn_name = request.data.get('asgn_name')
+        if mod.Enrollment.objects.get(profile = profile, course = mod.Courses.objects.get(course_name = course_name)): 
+            enrollment = mod.Enrollment.objects.get(profile = profile, course = mod.Courses.objects.get(course_name = course_name))
+        else :
+            return Response('Error')
+        if enrollment.isTeacher or (enrollment.isAssistant and course.assistant_grading_privilege):
+            pass
+        else:
+            return Response('Error')
         assignment = mod.Assignments.objects.get(course = course_name , name = asgn_name)
         assignment_files = mod.AssignmentFiles.objects.filter(assignment = assignment)
         for i in ds.index:
@@ -886,7 +898,7 @@ def rest_feedback(request):
                         x.isCompleted = True
                         x.save()
         id_list = list(id_set)
-        subject = "Feedback for assignment " + name + " in course " + course_name
+        subject = "Feedback for assignment " + asgn_name + " in course " + course_name
         message = "View Feedback on BlueFire moodle"
         t7 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, None ))  
         t7.start()
