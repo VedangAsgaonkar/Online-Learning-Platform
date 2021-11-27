@@ -800,6 +800,33 @@ def rest_courses(request):
 
 @api_view(["POST"])
 @permission_classes([AllowAny]) 
+def rest_submit_assignment(request):
+    if rest_login(request):
+        user_name = request.data.get("username")
+        profile = mod.Profile.objects.get(user = user_name)
+        course_name = request.data.get('course_name')
+        asgn_name = request.data.get('asgn_name')
+        assignment = mod.Assignments.objects.get(course = course_name , name = asgn_name)
+        for file in request.FILES.getlist('file'):
+                file_name = course_name+'/'+name+'/'+ user_name
+                file1 = mod.AssignmentFiles(assignment=assignment, file_name = file_name ,file=file, profile = profile)
+                file1.save()
+        id_list = [profile.email_id]
+        subject = "Assignment submission for " + name + " in course " + course_name
+        message = "Successfully submitted assignment " + name + " in course " + course_name
+        t3 = threading.Thread(target=send_email, args=(subject, message, email_from, id_list, None ))  
+        t3.start()
+        enrollment = mod.Enrollment.objects.get(profile = mod.Profile.objects.get(user= request.user), course = mod.Courses.objects.get(course_name = course_name))
+        assigncomplete = mod.AssignmentCompleted.objects.get(enrollment = enrollment , assignment =  assignment)
+        assigncomplete.isCompleted = True
+        assigncomplete.save()
+        Res = {'Assignment'+asgn_name: "Done"}
+        return Response(Res)
+    else:
+        raise ValidationError({"400": f'Some Problem'})
+
+@api_view(["POST"])
+@permission_classes([AllowAny]) 
 def rest_todolist(request):
     if rest_login(request):
         profile = mod.Profile.objects.get(user = request.data.get("username"))

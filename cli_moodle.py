@@ -30,7 +30,22 @@ while True:
             course_name = input(Fore.YELLOW+'Enter course name- '+ Style.RESET_ALL)
             asgn_name = input(Fore.YELLOW+'Enter assignment name- '+ Style.RESET_ALL)
             files = {'upload_file': ('grades.csv', open(file_name,'rb'), 'text/csv')}
-            response = requests.post('http://127.0.0.1:8000/rest/feedback/', data = {'username':'Teacher1', 'password':'BlueFire', 'course_name' : course_name, 'asgn_name' : asgn_name }, files=files)
+            response = requests.post('http://127.0.0.1:8000/rest/feedback/', data = {'username':username, 'password':password, 'course_name' : course_name, 'asgn_name' : asgn_name }, files=files)
+            print(response.json())
+        except Exception as e:
+            print("Error-",e)
+    if (cmd =='submit_assignment'):
+        try:
+            files = []
+            num_files = int(input('Numer of files to be uploaded- '))
+            for i in range(num_files):
+                file_name = input('Enter file name- ')
+                files.append(('file' ,open(file_name , 'rb') ))
+
+            course_name = input('Enter course name- ')
+            asgn_name = input('Enter assignment name- ')
+            response = requests.post('http://127.0.0.1:8000/rest/submit_assignment/', data = {'username':username, 'password':password, 'course_name' : course_name, 'asgn_name' : asgn_name }, files=files)
+            print(response.json())
         except Exception as e:
             print("Error-",e)
     elif (cmd=='exit'):
