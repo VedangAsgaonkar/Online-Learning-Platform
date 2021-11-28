@@ -237,6 +237,8 @@ def assignment_feedback(request,course_name,name):
                 id_set.add( mod.Profile.objects.get(user = ds['name'][i]).email_id )
             allCorrected = True
             for enrollment in mod.Enrollment.objects.filter(course = mod.Courses.objects.get(course_name = course_name), isTeacher = False) :
+                if enrollment.isAssistant :
+                    continue
                 allCorrected = allCorrected and mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment).isCompleted
                 if not allCorrected :
                    break
@@ -889,6 +891,8 @@ def rest_feedback(request):
                     id_set.add( mod.Profile.objects.get(user = ds['name'][i]).email_id )
         allCorrected = True
         for enrollment in mod.Enrollment.objects.filter(course = mod.Courses.objects.get(course_name = course_name), isTeacher = False) :
+                    if enrollment.isAssistant :
+                        continue
                     allCorrected = allCorrected and mod.AssignmentCompleted.objects.get(enrollment = enrollment, assignment = assignment).isCompleted
                     if not allCorrected :
                         break
