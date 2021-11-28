@@ -542,6 +542,7 @@ def announcements_create(request, course_name):
             message = mod.Message(course=course1)
             message.content = markdown.markdown(form.cleaned_data.get('content'))
             message.time_of_last_edit = datetime.datetime.now()
+            message.date_time_of_last_edit = datetime.datetime.now()
             message.author = mod.Profile.objects.get(user = request.user)
             message.save()
             print("fine")
@@ -561,10 +562,10 @@ def announcements(request, course_name):
         teacher = False
     if(mod.Message.objects.filter(course=course)):
         for parent_post in mod.Message.objects.filter(course = course):
-                current_message = (parent_post.content, parent_post.id, parent_post.author, str(parent_post.time_of_last_edit)[:8])
+                current_message = (parent_post.content, parent_post.id, parent_post.author, str(parent_post.date_time_of_last_edit+datetime.timedelta(hours=5.5))[:-13])
                 announcement_dict[current_message] = []
                 for reply in mod.Replies.objects.filter(parent_message = parent_post):
-                    announcement_dict[current_message].append((reply.content, reply.author, str(reply.time_of_last_edit)[:8]))
+                    announcement_dict[current_message].append((reply.content, reply.author, str(reply.date_time_of_last_edit+datetime.timedelta(hours=5.5))[:-13]))
     allowed = course.discussion_allowed
     return render(request,'announcements.html', {'data' : announcement_dict, 'course' : course_name, 'teacher':teacher, 'allowed':allowed})
 
@@ -576,6 +577,7 @@ def announcements_reply(request, course_name, id):
             reply = mod.Replies(parent_message = message)
             reply.content = markdown.markdown(form.cleaned_data.get('content'))
             reply.time_of_last_edit = datetime.datetime.now()
+            reply.date_time_of_last_edit = datetime.datetime.now()
             reply.author = mod.Profile.objects.get(user = request.user)
             reply.course = message.course
             reply.save()
@@ -674,27 +676,31 @@ def chat_screen(request, person):
                 if conversation.messages == None:
                     conversation.senders= []
                     conversation.times= []
+                    conversation.dates_and_times = []
                     conversation.messages = []
                 conversation.senders.append(True)
                 conversation.times.append(datetime.datetime.now())
+                conversation.dates_and_times.append(datetime.datetime.now())
                 conversation.messages.append(chat_message)
                 conversation.save()
                 length = len(conversation.messages)
                 for index in range(length):
-                    chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
+                    chat_list.append((conversation.messages[index],conversation.senders[index],conversation.dates_and_times[index]))
             elif mod.Conversation.objects.filter(person1 = receiver_person, person2 = profile1 ):
                 conversation =  mod.Conversation.objects.get(person1 = receiver_person, person2 = profile1)
                 if conversation.messages == None:
                     conversation.senders= []
+                    conversation.dates_and_times = []
                     conversation.times= []
                     conversation.messages = []
                 conversation.senders.append(False)
                 conversation.times.append(datetime.datetime.now())
+                conversation.dates_and_times.append(datetime.datetime.now())
                 conversation.messages.append(chat_message)
                 conversation.save()
                 length = len(conversation.messages)
                 for index in range(length):
-                    chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
+                    chat_list.append((conversation.messages[index],conversation.senders[index],conversation.dates_and_times[index]))
             else:
                 print(chat_message)
     else:
@@ -703,20 +709,22 @@ def chat_screen(request, person):
             conversation =  mod.Conversation.objects.get(person1 = profile1, person2 = receiver_person)
             if conversation.messages == None:
                 conversation.senders= []
+                conversation.dates_and_times = []
                 conversation.times= []
                 conversation.messages = []
             length = len(conversation.messages)
             for index in range(length):
-                chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
+                chat_list.append((conversation.messages[index],conversation.senders[index],conversation.dates_and_times[index]))
         elif mod.Conversation.objects.filter(person1 = receiver_person, person2 = profile1 ):
             conversation =  mod.Conversation.objects.get(person1 = receiver_person, person2 = profile1)
             if conversation.messages == None:
                 conversation.senders= []
+                conversation.dates_and_times = []
                 conversation.times= []
                 conversation.messages = []        
             length = len(conversation.messages)
             for index in range(length):
-                chat_list.append((conversation.messages[index],conversation.senders[index],conversation.times[index]))
+                chat_list.append((conversation.messages[index],conversation.senders[index],conversation.dates_and_times[index]))
     form = forms.AddChat()
     return render(request, 'chat_list.html', {'form':form, 'chat_list' : chat_list, 'is_sender' : sender })
 
