@@ -6,8 +6,15 @@ init()
 
 HOST = 'http://127.0.0.1:8000'
 
-username = input(Fore.YELLOW+'Please Enter Username- ' + Style.RESET_ALL)
-password = getpass(Fore.YELLOW+'Please Enter Password- ' + Style.RESET_ALL)
+while True:
+    username = input(Fore.YELLOW+'Please Enter Username- ' + Style.RESET_ALL)
+    password = getpass(Fore.YELLOW+'Please Enter Password- ' + Style.RESET_ALL)
+    response = requests.post(HOST+'/rest/courses/', data = {'username':username, 'password':password})
+    if response.status_code == 200:
+        break
+    else:
+        print("Incorrect Credentials, Please try again")
+
 while True:
     cmd = input(Fore.CYAN +'BlueFire ' + Fore.MAGENTA+'$ ' + Style.RESET_ALL)
     if (cmd =='courses'):
@@ -52,10 +59,14 @@ while True:
         try:
             course_name = input(Fore.YELLOW+'Enter course name- '+ Style.RESET_ALL)
             asgn_name = input(Fore.YELLOW+'Enter assignment name- '+ Style.RESET_ALL)
-            response = requests.post(HOST+'/rest/assignment_download/', data = {'username':username, 'password':password, 'course_name' : course_name, 'asgn_name' : asgn_name })
-            with open(""+course_name+"- "+asgn_name+" submissions.zip", 'wb') as file:
-                file.write(response.content)
-            print("Success")
+            response = requests.post(HOST+'/rest/assignment_download/', data = {'username':username, 'password':'NuSRpTRdUQWDL6m', 'course_name' : course_name, 'asgn_name' : asgn_name })
+            if response.status_code == 200:
+                with open(""+course_name+"- "+asgn_name+" submissions.zip", 'wb') as file:
+                    file.write(response.content)
+                print("Success")
+                print("Saved as- "+course_name+"- "+asgn_name+" submissions.zip")
+            else:
+                print("Error- No submissions present or you do not have access")
         except Exception as e:
             print("Error-",e)
     elif (cmd=='exit'):

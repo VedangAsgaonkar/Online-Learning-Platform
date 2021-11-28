@@ -941,12 +941,10 @@ def rest_assignment_download(request):
             zip_file = open(output_filename+'.zip', 'rb')
             return FileResponse(zip_file, filename=course_name+'_'+name+'_submissions.zip')
         else:
-            Res = 'No submission is present'
-            return Response(Res)
+            raise ValidationError({"400": f'No Submissions'})
 
     else:
-        Res = 'You do not have access to this command'
-        return Response(Res)
+        raise ValidationError({"400": f'You do not have access to this command'})
 
 def rest_login(request):
     data = {}
