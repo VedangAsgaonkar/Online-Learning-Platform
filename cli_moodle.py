@@ -1,12 +1,13 @@
 import requests
 from colorama import init, Fore, Back, Style
 import os
+from getpass import getpass
 init()
 
 HOST = 'http://127.0.0.1:8000'
 
 username = input(Fore.YELLOW+'Please Enter Username- ' + Style.RESET_ALL)
-password = input(Fore.YELLOW+'Please Enter Password- ' + Style.RESET_ALL)
+password = getpass(Fore.YELLOW+'Please Enter Password- ' + Style.RESET_ALL)
 while True:
     cmd = input(Fore.CYAN +'BlueFire ' + Fore.MAGENTA+'$ ' + Style.RESET_ALL)
     if (cmd =='courses'):
