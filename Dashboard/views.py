@@ -604,6 +604,7 @@ def grades(request, course_name):
     course =mod.Courses.objects.get(course_name = course_name)
     grades = {}
     course_total=0
+    grand_total = 0
     warning=""
     # This calculation is for the student
     if not (enrollment.isTeacher or enrollment.isAssistant):
@@ -615,9 +616,12 @@ def grades(request, course_name):
                     if sub.grade != 'Not graded yet':
                         grades[assignment.name] = sub.marks
                         course_total+=sub.marks*assignment.weightage
+                        grand_total += assignment.weightage
+        course_total /= 100
         enrollment.marks = course_total
-        if(enrollment.marks<course_total/2):
-            warning = "You are Significantly below the class average"
+
+        if(enrollment.marks<grand_total/3):
+            warning = "Your score is below 33% of the total"
     else:
         count=0
         for assignment in mod.Assignments.objects.filter(course = course):
@@ -628,15 +632,17 @@ def grades(request, course_name):
                     if sub.grade != 'Not graded yet':
                         grades[assignment.name] += sub.marks
                         course_total+=sub.marks*assignment.weightage
+                        grand_total += assignment.weightage
                         count+=1
             grades[assignment.name]/=count
         course_total/=count
+        course_total /= 100
         enrollment.marks = course_total
         course.class_average = course_total
 
     print("joiefje")
     
-    return render(request,'grades.html',{'grades':grades, 'course_name':course_name, 'course_total':course_total, 'warning':warning})
+    return render(request,'grades.html',{'grades':grades, 'course_name':course_name, 'course_total':course_total, 'warning':warning, 'grand_total' : grand_total})
 
 
 def message_list(request):
